@@ -1,0 +1,73 @@
+diff --git a/patches/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGSupportPatch.kt b/patches/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGSupportPatch.kt
+new file mode 100644
+index 0000000..2b5e518
+--- /dev/null
++++ b/patches/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGSupportPatch.kt
+@@ -0,0 +1,67 @@
++package app.morphe.patches.all.misc.microg
++
++import app.morphe.patcher.patch.booleanOption
++import app.morphe.patcher.patch.patch
++import app.morphe.patcher.patch.stringOption
++
++@Suppress("unused")
++val microGSupportPatch = patch(
++    name = "MicroG support (universal)",
++    description = "Makes any app that uses Google Play services work with a user-installed microG " +
++        "instead of complaining that Google Play services are missing. Works without root. " +
++        "Cooperates with the optional GmsCompat-Stub app.",
++    default = false,
++) {
++    val vendor by stringOption(
++        key = "gmsCoreVendor",
++        default = MICROG_DEFAULT_VENDOR,
++        values = MICROG_VENDORS,
++        title = "GmsCore vendor",
++        description = "Package prefix of the installed microG. The app's Google Play services package, " +
++            "permissions, intent actions and providers are redirected to it.",
++        required = true,
++    ) { it != null && it.matches(Regex("[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+")) }
++
++    val spoofIdentity by booleanOption(
++        key = "spoofIdentity",
++        default = true,
++        title = "Keep original app identity",
++        description = "Tells microG the original package name and signing certificate, so Google Sign-In, " +
++            "Firebase push and Maps API keys keep working after re-signing.",
++    )
++
++    val forceAvailable by booleanOption(
++        key = "forceAvailable",
++        default = true,
++        title = "Report Google Play services available",
++        description = "When microG is installed, the Google Play services availability check returns SUCCESS " +
++            "even if the app's library rejects microG's version or signature.",
++    )
++
++    val useStub by booleanOption(
++        key = "useGmsCompatStub",
++        default = true,
++        title = "Use GmsCompat-Stub",
++        description = "If the GmsCompat-Stub app is installed, register with it so it keeps microG alive " +
++            "and handles setup prompts for all patched apps.",
++    )
++
++    val prompts by booleanOption(
++        key = "showPrompts",
++        default = true,
++        title = "Show setup prompts",
++        description = "Show a dialog when microG is missing or battery optimized.",
++    )
++
++    dependsOn(
++        universalMicroGSupportPatch(
++            MicroGSupportSettings(
++                vendor = { vendor!! },
++                spoofIdentity = { spoofIdentity!! },
++                forceAvailable = { forceAvailable!! },
++                useStub = { useStub!! },
++                prompts = { prompts!! },
++            )
++        )
++    )
++}

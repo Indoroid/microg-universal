@@ -1,0 +1,1133 @@
+diff --git a/extensions/microg/build.gradle.kts b/extensions/microg/build.gradle.kts
+new file mode 100644
+index 0000000..9c8f1ed
+--- /dev/null
++++ b/extensions/microg/build.gradle.kts
+@@ -0,0 +1,76 @@
++import com.android.tools.r8.*
++import java.util.jar.JarOutputStream
++import java.util.zip.ZipEntry
++
++plugins {
++    alias(libs.plugins.android.library)
++}
++
++val minApi = 23
++
++android {
++    namespace = "app.morphe.extension.microg"
++    compileSdk = 36
++
++    defaultConfig {
++        minSdk = minApi
++    }
++
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_17
++        targetCompatibility = JavaVersion.VERSION_17
++    }
++}
++
++dependencies {
++    implementation(libs.annotation)
++}
++
++val dexOutput = configurations.create("dexOutput") {
++    isCanBeConsumed = true
++    isCanBeResolved = false
++}
++
++artifacts {
++    add(
++        dexOutput.name,
++        layout.buildDirectory.dir("outputs/dex").map { it.file("classes.dex") }) {
++        builtBy("generateDex")
++    }
++}
++
++tasks.register("generateDex") {
++    description = "Generates and compiles Java classes into a dex file using D8."
++    group = "build"
++
++    val compileTask = tasks.named<JavaCompile>("compileReleaseJavaWithJavac")
++
++    dependsOn(compileTask)
++
++    val classesDir = compileTask.flatMap { it.destinationDirectory }
++    val bootClasspath = androidComponents.sdkComponents.bootClasspath
++    val jarFile = layout.buildDirectory.file("intermediates/dex-input/classes-for-dex.jar")
++    val outputDir = layout.buildDirectory.dir("outputs/dex")
++
++    doLast {
++        val jar = jarFile.get().asFile.apply { parentFile.mkdirs() }
++        JarOutputStream(jar.outputStream()).use { jos ->
++            classesDir.get().asFile.walkTopDown().filter { it.isFile }.forEach { file ->
++                val entryName = file.relativeTo(classesDir.get().asFile).invariantSeparatorsPath
++                jos.putNextEntry(ZipEntry(entryName))
++                file.inputStream().use { it.copyTo(jos) }
++                jos.closeEntry()
++            }
++        }
++
++        val outDir = outputDir.get().asFile.apply { mkdirs() }
++        val command = D8Command.builder()
++            .addProgramFiles(jar.toPath())
++            .addLibraryFiles(bootClasspath.get().map { it.asFile.toPath() })
++            .setOutput(outDir.toPath(), OutputMode.DexIndexed)
++            .setMinApiLevel(minApi)
++            .build()
++
++        D8.run(command)
++    }
++}
+diff --git a/extensions/microg/src/main/AndroidManifest.xml b/extensions/microg/src/main/AndroidManifest.xml
+new file mode 100644
+index 0000000..9b65eb0
+--- /dev/null
++++ b/extensions/microg/src/main/AndroidManifest.xml
+@@ -0,0 +1 @@
++<manifest/>
+diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java b/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java
+new file mode 100644
+index 0000000..6d416d2
+--- /dev/null
++++ b/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java
+@@ -0,0 +1,15 @@
++package app.morphe.extension.microg;
++
++/**
++ * Original Google release certificate (SHA-1 38918a453d07199354f8b19af05ec6562ced5788,
++ * SHA-256 f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83).
++ * Extracted from Phonesky / GmsCore (NikGApps 2026-11-19) and identical to MicroG's
++ * fake_signature. Rotated GmsCore builds keep it as the oldest lineage entry, which is what
++ * GET_SIGNATURES and getSigningCertificateHistory()[0] report.
++ */
++final class GoogleCert {
++    static final String DER_BASE64 = "MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK";
++
++    private GoogleCert() {
++    }
++}
+diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java
+new file mode 100644
+index 0000000..457972a
+--- /dev/null
++++ b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java
+@@ -0,0 +1,291 @@
++package app.morphe.extension.microg;
++
++import android.app.Activity;
++import android.app.AlertDialog;
++import android.app.Application;
++import android.content.Context;
++import android.content.Intent;
++import android.content.SharedPreferences;
++import android.content.pm.ApplicationInfo;
++import android.content.pm.PackageInfo;
++import android.content.pm.PackageManager;
++import android.content.pm.Signature;
++import android.net.Uri;
++import android.os.Build;
++import android.os.Bundle;
++import android.os.Handler;
++import android.os.Looper;
++import android.os.PowerManager;
++import android.util.Base64;
++import android.util.Log;
++
++/**
++ * Runtime half of the universal microG patch: the in-app equivalent of GrapheneOS'
++ * GmsCompat client hooks, injected into the patched app instead of the OS.
++ * <p>
++ * Every PackageManager.getPackageInfo call site of the app is redirected here, so the
++ * play-services client library sees the installed microG (and an optional Play Store
++ * companion) with the Google certificate it expects, regardless of obfuscation.
++ */
++@SuppressWarnings({"unused", "deprecation"})
++public final class MicroGBridge {
++    private static final String TAG = "MorpheMicroG";
++
++    // Replaced during patching. Never written as com.google.* so the patch's string rewrite
++    // can not touch them.
++    static String GMS_PACKAGE = "MICROG_GMS_PACKAGE_PLACEHOLDER";
++    static String STUB_ENABLED = "MICROG_STUB_ENABLED_PLACEHOLDER";
++    static String PROMPTS_ENABLED = "MICROG_PROMPTS_ENABLED_PLACEHOLDER";
++
++    private static final String VENDING_PACKAGE = "com.android.vending";
++    private static final String CLIENT_VERSION_METADATA = "com.google.android.gms" + ".version";
++
++    // GmsCompat-Stub contract. Must match the stub app.
++    static final String STUB_PACKAGE = "app.morphe.gmscompat";
++    static final Uri STUB_BROKER = Uri.parse("content://app.morphe.gmscompat.broker");
++    static final String STUB_ACTION_SETUP = "app.morphe.gmscompat.action.SETUP";
++    static final String STUB_CALL_STATUS = "status";
++    static final String STUB_CALL_REGISTER = "register";
++
++    private static final String MICROG_DOWNLOAD_URL = "https://github.com/MorpheApp/MicroG-RE/releases/latest";
++    private static final String PREFS = "morphe_microg";
++    private static final String PREF_DONT_ASK = "dont_ask";
++
++    private static volatile Context appContext;
++    private static volatile Signature googleSignature;
++    private static volatile Boolean microGInstalled;
++    private static volatile int requiredClientVersion = -1;
++
++    private MicroGBridge() {
++    }
++
++    // region PackageManager call-site replacements.
++
++    public static PackageInfo getPackageInfo(PackageManager pm, String packageName, int flags)
++            throws PackageManager.NameNotFoundException {
++        return spoof(pm, packageName, pm.getPackageInfo(packageName, flags));
++    }
++
++    public static PackageInfo getPackageInfo(PackageManager pm, String packageName,
++                                             PackageManager.PackageInfoFlags flags)
++            throws PackageManager.NameNotFoundException {
++        return spoof(pm, packageName, pm.getPackageInfo(packageName, flags));
++    }
++
++    private static PackageInfo spoof(PackageManager pm, String packageName, PackageInfo info) {
++        if (info == null || packageName == null) return info;
++        boolean gms = packageName.equals(GMS_PACKAGE);
++        if (!gms && !packageName.equals(VENDING_PACKAGE)) return info;
++
++        Signature google = googleSignature();
++        if (info.signatures != null) {
++            info.signatures = new Signature[]{google};
++        }
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && info.signingInfo != null) {
++            // Arrays are returned by reference; for a single signer without lineage both
++            // getters return the same array.
++            replaceFirst(info.signingInfo.getApkContentsSigners(), google);
++            replaceFirst(info.signingInfo.getSigningCertificateHistory(), google);
++        }
++        if (gms) {
++            int required = requiredClientVersion(pm);
++            if (required > 0 && info.versionCode < required) {
++                // microG implements the APIs it advertises; an older version code only makes the
++                // client library refuse to connect.
++                info.versionCode = required;
++                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.setLongVersionCode(required);
++            }
++        }
++        return info;
++    }
++
++    private static void replaceFirst(Signature[] array, Signature signature) {
++        if (array != null && array.length > 0) array[0] = signature;
++    }
++
++    private static Signature googleSignature() {
++        Signature s = googleSignature;
++        if (s == null) {
++            s = new Signature(Base64.decode(GoogleCert.DER_BASE64, Base64.DEFAULT));
++            googleSignature = s;
++        }
++        return s;
++    }
++
++    private static int requiredClientVersion(PackageManager pm) {
++        int v = requiredClientVersion;
++        if (v >= 0) return v;
++        v = 0;
++        Context ctx = context();
++        if (ctx != null) {
++            try {
++                ApplicationInfo ai = pm.getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA);
++                if (ai.metaData != null) v = ai.metaData.getInt(CLIENT_VERSION_METADATA, 0);
++            } catch (Exception ignored) {
++            }
++        }
++        requiredClientVersion = v;
++        return v;
++    }
++
++    // endregion
++
++    // region Availability (used by the isGooglePlayServicesAvailable fingerprint hook).
++
++    /**
++     * @return true if the availability check may report SUCCESS without running Google's checks.
++     */
++    public static boolean forcePlayServicesAvailable() {
++        return isMicroGInstalled();
++    }
++
++    public static boolean isMicroGInstalled() {
++        Boolean installed = microGInstalled;
++        if (installed != null) return installed;
++        Context ctx = context();
++        if (ctx == null) return false;
++        boolean result;
++        try {
++            ApplicationInfo ai = ctx.getPackageManager().getApplicationInfo(GMS_PACKAGE, 0);
++            result = ai.enabled;
++        } catch (PackageManager.NameNotFoundException e) {
++            result = false;
++        }
++        microGInstalled = result;
++        return result;
++    }
++
++    // endregion
++
++    // region Init and prompts.
++
++    /**
++     * Called by {@link MicroGInitProvider} before Application.onCreate in every process.
++     */
++    static void init(Context context) {
++        Context app = context.getApplicationContext();
++        appContext = app != null ? app : context;
++
++        if (!isMainProcess()) return;
++
++        boolean installed = isMicroGInstalled();
++        Bundle stub = Boolean.parseBoolean(STUB_ENABLED) ? callStub(STUB_CALL_REGISTER) : null;
++        boolean stubHandlesPrompts = stub != null && stub.getBoolean("prompts_handled", false);
++        Log.i(TAG, "microG " + GMS_PACKAGE + " installed=" + installed + ", stub=" + (stub != null));
++
++        if (!Boolean.parseBoolean(PROMPTS_ENABLED) || stubHandlesPrompts) return;
++
++        String message = null;
++        if (!installed) {
++            message = "This app was patched to use microG instead of Google Play services, "
++                    + "but microG (" + GMS_PACKAGE + ") is not installed. "
++                    + "Sign-in, push notifications and maps will not work until it is installed.";
++        } else if (isBatteryOptimized()) {
++            message = "microG is restricted by battery optimization. Push notifications "
++                    + "may be delayed or missing. Allow microG to run in the background.";
++        }
++        if (message != null && !prefs().getBoolean(PREF_DONT_ASK, false)) {
++            showOnFirstActivity(message, !installed);
++        }
++    }
++
++    private static Bundle callStub(String method) {
++        Context ctx = context();
++        try {
++            return ctx.getContentResolver().call(STUB_BROKER, method, ctx.getPackageName(), null);
++        } catch (Exception e) {
++            // Stub not installed or not visible. Patched apps work without it.
++            return null;
++        }
++    }
++
++    private static boolean isBatteryOptimized() {
++        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false;
++        PowerManager pm = (PowerManager) context().getSystemService(Context.POWER_SERVICE);
++        return pm != null && !pm.isIgnoringBatteryOptimizations(GMS_PACKAGE);
++    }
++
++    private static boolean isMainProcess() {
++        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return true;
++        return context().getPackageName().equals(Application.getProcessName());
++    }
++
++    private static SharedPreferences prefs() {
++        return context().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
++    }
++
++    private static void showOnFirstActivity(String message, boolean missing) {
++        Context ctx = context();
++        if (!(ctx instanceof Application)) return;
++        Application app = (Application) ctx;
++        app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
++            @Override
++            public void onActivityResumed(Activity activity) {
++                app.unregisterActivityLifecycleCallbacks(this);
++                // Delay so the activity finishes its first layout and theme setup.
++                new Handler(Looper.getMainLooper()).postDelayed(() -> show(activity, message, missing), 300);
++            }
++
++            @Override public void onActivityCreated(Activity a, Bundle b) { }
++            @Override public void onActivityStarted(Activity a) { }
++            @Override public void onActivityPaused(Activity a) { }
++            @Override public void onActivityStopped(Activity a) { }
++            @Override public void onActivitySaveInstanceState(Activity a, Bundle b) { }
++            @Override public void onActivityDestroyed(Activity a) { }
++        });
++    }
++
++    private static void show(Activity activity, String message, boolean missing) {
++        if (activity.isFinishing()) return;
++        try {
++            new AlertDialog.Builder(activity)
++                    .setTitle("microG")
++                    .setMessage(message)
++                    .setPositiveButton(missing ? "Install" : "Fix", (d, w) -> openFix(activity, missing))
++                    .setNegativeButton("Later", null)
++                    .setNeutralButton("Don't ask again", (d, w) ->
++                            prefs().edit().putBoolean(PREF_DONT_ASK, true).apply())
++                    .show();
++        } catch (Exception e) {
++            Log.w(TAG, "Could not show microG dialog", e);
++        }
++    }
++
++    private static void openFix(Activity activity, boolean missing) {
++        Intent stub = new Intent(STUB_ACTION_SETUP).setPackage(STUB_PACKAGE);
++        try {
++            activity.startActivity(stub);
++            return;
++        } catch (Exception ignored) {
++            // No stub: fall through.
++        }
++        Intent intent;
++        if (missing) {
++            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MICROG_DOWNLOAD_URL));
++        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++            intent = new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
++        } else {
++            return;
++        }
++        try {
++            activity.startActivity(intent);
++        } catch (Exception e) {
++            Log.w(TAG, "Could not open " + intent, e);
++        }
++    }
++
++    private static Context context() {
++        Context ctx = appContext;
++        if (ctx != null) return ctx;
++        try {
++            // Fallback if a hooked method runs before the init provider (static initializers).
++            ctx = (Context) Class.forName("android.app.ActivityThread")
++                    .getMethod("currentApplication").invoke(null);
++            appContext = ctx;
++        } catch (Exception ignored) {
++        }
++        return ctx;
++    }
++
++    // endregion
++}
+diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGInitProvider.java b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGInitProvider.java
+new file mode 100644
+index 0000000..fe5ac7b
+--- /dev/null
++++ b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGInitProvider.java
+@@ -0,0 +1,30 @@
++package app.morphe.extension.microg;
++
++import android.content.ContentProvider;
++import android.content.ContentValues;
++import android.database.Cursor;
++import android.net.Uri;
++
++/**
++ * Added to the patched manifest. Content providers are created before Application.onCreate in
++ * every process, so this initializes the bridge without a per-app fingerprint (the role
++ * GmsCompat.maybeEnable() plays from Instrumentation.newApplication on GrapheneOS).
++ */
++public final class MicroGInitProvider extends ContentProvider {
++    @Override
++    public boolean onCreate() {
++        try {
++            MicroGBridge.init(getContext());
++        } catch (Throwable t) {
++            // Never break app start-up.
++            android.util.Log.e("MorpheMicroG", "init failed", t);
++        }
++        return false;
++    }
++
++    @Override public Cursor query(Uri u, String[] p, String s, String[] a, String o) { return null; }
++    @Override public String getType(Uri u) { return null; }
++    @Override public Uri insert(Uri u, ContentValues v) { return null; }
++    @Override public int delete(Uri u, String s, String[] a) { return 0; }
++    @Override public int update(Uri u, ContentValues v, String s, String[] a) { return 0; }
++}
+diff --git a/patch-library/build.gradle.kts b/patch-library/build.gradle.kts
+index df3c164..7ea2a37 100644
+--- a/patch-library/build.gradle.kts
++++ b/patch-library/build.gradle.kts
+@@ -27,6 +27,11 @@ val dexInput = configurations.create("dexInput") {
+     isCanBeResolved = true
+ }
+ 
++val microgDexInput = configurations.create("microgDexInput") {
++    isCanBeConsumed = false
++    isCanBeResolved = true
++}
++
+ dependencies {
+     // Used by JsonGenerator.
+     implementation(libs.gson)
+@@ -37,6 +42,7 @@ dependencies {
+     testImplementation(kotlin("test"))
+ 
+     dexInput(project(":extensions:signature", configuration = "dexOutput"))
++    microgDexInput(project(":extensions:microg", configuration = "dexOutput"))
+ }
+ 
+ tasks.test {
+@@ -49,6 +55,11 @@ tasks.named<Jar>("jar") {
+         into("generated/extensions")
+         rename("classes.dex", "signature.dex")
+     }
++    dependsOn(":extensions:microg:generateDex")
++    from(microgDexInput) {
++        into("generated/extensions")
++        rename("classes.dex", "microg.dex")
++    }
+ }
+ 
+ publishing {
+diff --git a/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/Fingerprints.kt b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/Fingerprints.kt
+new file mode 100644
+index 0000000..6d80484
+--- /dev/null
++++ b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/Fingerprints.kt
+@@ -0,0 +1,55 @@
++package app.morphe.patches.all.misc.microg
++
++import app.morphe.patcher.Fingerprint
++import app.morphe.patcher.methodCall
++import app.morphe.patcher.string
++
++/**
++ * Every PackageManager.getPackageInfo call outside the microG extension.
++ */
++internal object MicroGGetPackageInfoFingerprint : Fingerprint(
++    filters = listOf(
++        methodCall(
++            definingClass = "Landroid/content/pm/PackageManager;",
++            name = "getPackageInfo",
++            returnType = "Landroid/content/pm/PackageInfo;",
++        )
++    ),
++    custom = { _, classDef -> !classDef.type.startsWith(MICROG_EXTENSION_PACKAGE) }
++)
++
++/**
++ * GooglePlayServicesUtilLight.isGooglePlayServicesAvailable(Context, int): int
++ * (play-services-basement 18.x). Log strings survive R8 renaming; access flags do not
++ * (R8 class merging turns it into an instance method), so they are not matched.
++ */
++internal object IsGooglePlayServicesAvailableFingerprint : Fingerprint(
++    returnType = "I",
++    parameters = listOf("Landroid/content/Context;", "I"),
++    filters = listOf(
++        string(" requires Google Play services, but their signature is invalid."),
++    )
++)
++
++/**
++ * Older play-services-basement builds and Google's own apps (the variant Morphe targets for YouTube).
++ */
++internal object LegacyIsGooglePlayServicesAvailableFingerprint : Fingerprint(
++    returnType = "I",
++    parameters = listOf("L", "I"),
++    filters = listOf(
++        string("MetadataValueReader"),
++        string("This should never happen."),
++    )
++)
++
++/**
++ * GooglePlayServicesUtilLight.ensurePlayServicesAvailable(Context, int), which throws when unavailable.
++ */
++internal object EnsurePlayServicesAvailableFingerprint : Fingerprint(
++    returnType = "V",
++    parameters = listOf("L", "I"),
++    filters = listOf(
++        string("Google Play Services not available"),
++    )
++)
+diff --git a/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGConstants.kt b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGConstants.kt
+new file mode 100644
+index 0000000..6827ff5
+--- /dev/null
++++ b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/MicroGConstants.kt
+@@ -0,0 +1,320 @@
++// GENERATED by tools/gen_constants.py from MicroG-RE manifests. Do not edit by hand.
++package app.morphe.patches.all.misc.microg
++
++/**
++ * Names MicroG-RE serves under its own vendor prefix (com.google.X -> <vendor>.X).
++ * Cross-checked with GmsCore manifest: 731 GmsCore names not implemented by MicroG-RE
++ * are intentionally not renamed.
++ */
++internal object MicroGConstants {
++    val ACTIONS = setOf(
++        "com.google.android.c2dm.intent.RECEIVE",
++        "com.google.android.c2dm.intent.REGISTER",
++        "com.google.android.c2dm.intent.UNREGISTER",
++        "com.google.android.contextmanager.service.ContextManagerService.START",
++        "com.google.android.gcm.intent.SEND",
++        "com.google.android.gms.accounts.ACCOUNT_SERVICE",
++        "com.google.android.gms.accountsettings.ACCOUNT_PREFERENCES_SETTINGS",
++        "com.google.android.gms.accountsettings.MY_ACCOUNT",
++        "com.google.android.gms.accountsettings.PRIVACY_SETTINGS",
++        "com.google.android.gms.accountsettings.SECURITY_SETTINGS",
++        "com.google.android.gms.accountsettings.action.BROWSE_SETTINGS",
++        "com.google.android.gms.accountsettings.action.VIEW_SETTINGS",
++        "com.google.android.gms.ads.gservice.START",
++        "com.google.android.gms.ads.identifier.service.EVENT_ATTESTATION",
++        "com.google.android.gms.ads.service.CACHE",
++        "com.google.android.gms.ads.service.CONSENT_LOOKUP",
++        "com.google.android.gms.ads.service.HTTP",
++        "com.google.android.gms.ads.service.START",
++        "com.google.android.gms.analytics.service.START",
++        "com.google.android.gms.appinvite.service.START",
++        "com.google.android.gms.appset.service.START",
++        "com.google.android.gms.appstate.service.START",
++        "com.google.android.gms.appusage.service.START",
++        "com.google.android.gms.asterism.service.START",
++        "com.google.android.gms.audiomodem.service.AudioModemService.START",
++        "com.google.android.gms.audit.service.START",
++        "com.google.android.gms.auth.GOOGLE_SIGN_IN",
++        "com.google.android.gms.auth.account.authapi.START",
++        "com.google.android.gms.auth.account.authenticator.auto.service.START",
++        "com.google.android.gms.auth.account.authenticator.chromeos.START",
++        "com.google.android.gms.auth.account.authenticator.tv.service.START",
++        "com.google.android.gms.auth.account.data.service.START",
++        "com.google.android.gms.auth.account.workaccount.START",
++        "com.google.android.gms.auth.api.credentials.ASSISTED_SIGNIN",
++        "com.google.android.gms.auth.api.credentials.PICKER",
++        "com.google.android.gms.auth.api.credentials.service.START",
++        "com.google.android.gms.auth.api.identity.service.authorization.START",
++        "com.google.android.gms.auth.api.identity.service.credentialsaving.START",
++        "com.google.android.gms.auth.api.identity.service.signin.START",
++        "com.google.android.gms.auth.api.phone.service.InternalService.START",
++        "com.google.android.gms.auth.api.phone.service.SmsRetrieverApiService.START",
++        "com.google.android.gms.auth.api.signin.service.START",
++        "com.google.android.gms.auth.be.appcert.AppCertService",
++        "com.google.android.gms.auth.blockstore.service.START",
++        "com.google.android.gms.auth.config.service.START",
++        "com.google.android.gms.auth.cryptauth.cryptauthservice.START",
++        "com.google.android.gms.auth.key.retrieval.service.START",
++        "com.google.android.gms.auth.login.LOGIN",
++        "com.google.android.gms.auth.proximity.START",
++        "com.google.android.gms.auth.proximity.devicesyncservice.START",
++        "com.google.android.gms.auth.proximity.securechannelservice.START",
++        "com.google.android.gms.auth.service.START",
++        "com.google.android.gms.backup.ACTION_BACKUP_SETTINGS",
++        "com.google.android.gms.backup.G1_BACKUP",
++        "com.google.android.gms.backup.G1_RESTORE",
++        "com.google.android.gms.backup.GMS_MODULE_RESTORE",
++        "com.google.android.gms.backup.GMS_RESTORE",
++        "com.google.android.gms.beacon.internal.IBleService.START",
++        "com.google.android.gms.car.service.START",
++        "com.google.android.gms.carrierauth.service.START",
++        "com.google.android.gms.cast.firstparty.START",
++        "com.google.android.gms.cast.remote_display.service.START",
++        "com.google.android.gms.cast.service.BIND_CAST_DEVICE_CONTROLLER_SERVICE",
++        "com.google.android.gms.cast_mirroring.service.START",
++        "com.google.android.gms.checkin.BIND_TO_SERVICE",
++        "com.google.android.gms.chimera.container.moduleinstall.ModuleInstallService.START",
++        "com.google.android.gms.chromesync.service.START",
++        "com.google.android.gms.clearcut.bootcount.service.START",
++        "com.google.android.gms.clearcut.service.START",
++        "com.google.android.gms.common.account.CHOOSE_ACCOUNT",
++        "com.google.android.gms.common.account.CHOOSE_ACCOUNT_USERTILE",
++        "com.google.android.gms.common.download.START",
++        "com.google.android.gms.common.service.START",
++        "com.google.android.gms.common.telemetry.service.START",
++        "com.google.android.gms.config.START",
++        "com.google.android.gms.constellation.service.START",
++        "com.google.android.gms.credential.manager.service.firstparty.START",
++        "com.google.android.gms.deviceconnection.service.START",
++        "com.google.android.gms.drive.ApiService.RESET_AFTER_BOOT",
++        "com.google.android.gms.drive.ApiService.START",
++        "com.google.android.gms.drive.ApiService.STOP",
++        "com.google.android.gms.droidguard.service.INIT",
++        "com.google.android.gms.droidguard.service.PING",
++        "com.google.android.gms.droidguard.service.START",
++        "com.google.android.gms.enterprise.loader.service.START",
++        "com.google.android.gms.facs.cache.service.START",
++        "com.google.android.gms.facs.internal.service.START",
++        "com.google.android.gms.family.v2.DELETE_MEMBER",
++        "com.google.android.gms.family.v2.MANAGE",
++        "com.google.android.gms.feedback.internal.IFeedbackService",
++        "com.google.android.gms.fido.credentialstore.internal_service.START",
++        "com.google.android.gms.fido.fido2.privileged.START",
++        "com.google.android.gms.fido.fido2.regular.START",
++        "com.google.android.gms.fido.fido2.zeroparty.START",
++        "com.google.android.gms.fido.sourcedevice.service.START",
++        "com.google.android.gms.fido.targetdevice.internal_service.START",
++        "com.google.android.gms.fido.u2f.privileged.START",
++        "com.google.android.gms.fido.u2f.thirdparty.START",
++        "com.google.android.gms.fido.u2f.zeroparty.START",
++        "com.google.android.gms.findmydevice.spot.service.locationreport.START",
++        "com.google.android.gms.findmydevice.spot.service.management.START",
++        "com.google.android.gms.firstparty.ACTION_BENDER3",
++        "com.google.android.gms.fitness.BleApi",
++        "com.google.android.gms.fitness.ConfigApi",
++        "com.google.android.gms.fitness.GoalsApi",
++        "com.google.android.gms.fitness.GoogleFitnessService.START",
++        "com.google.android.gms.fitness.HistoryApi",
++        "com.google.android.gms.fitness.InternalApi",
++        "com.google.android.gms.fitness.RecordingApi",
++        "com.google.android.gms.fitness.SensorsApi",
++        "com.google.android.gms.fitness.SessionsApi",
++        "com.google.android.gms.fonts.service.START",
++        "com.google.android.gms.freighter.service.START",
++        "com.google.android.gms.games.PLAY_GAMES_UPGRADE",
++        "com.google.android.gms.games.SHOW_SELECT_SNAPSHOT",
++        "com.google.android.gms.games.VIEW_ACHIEVEMENTS",
++        "com.google.android.gms.games.VIEW_LEADERBOARDS",
++        "com.google.android.gms.games.VIEW_LEADERBOARD_SCORES",
++        "com.google.android.gms.games.internal.connect.service.START",
++        "com.google.android.gms.games.service.START",
++        "com.google.android.gms.gass.START",
++        "com.google.android.gms.gmscompliance.service.START",
++        "com.google.android.gms.googlehelp.HELP",
++        "com.google.android.gms.googlehelp.service.GoogleHelpService.START",
++        "com.google.android.gms.growth.service.START",
++        "com.google.android.gms.herrevad.services.LightweightNetworkQualityAndroidService.START",
++        "com.google.android.gms.icing.INDEX_SERVICE",
++        "com.google.android.gms.icing.LIGHTWEIGHT_INDEX_SERVICE",
++        "com.google.android.gms.identity.service.BIND",
++        "com.google.android.gms.identitycredentials.service.START",
++        "com.google.android.gms.inappreach.service.START",
++        "com.google.android.gms.instantapps.START",
++        "com.google.android.gms.kids.service.START",
++        "com.google.android.gms.languageprofile.service.START",
++        "com.google.android.gms.learning.internal.dynamitesupport.START",
++        "com.google.android.gms.learning.intservice.START",
++        "com.google.android.gms.learning.predictor.START",
++        "com.google.android.gms.learning.trainer.START",
++        "com.google.android.gms.learning.training.background.START",
++        "com.google.android.gms.location.places.GeoDataApi",
++        "com.google.android.gms.location.places.PlaceDetectionApi",
++        "com.google.android.gms.location.places.PlacesApi",
++        "com.google.android.gms.location.places.ui.PICK_PLACE",
++        "com.google.android.gms.location.reporting.service.START",
++        "com.google.android.gms.location.settings.CHECK_SETTINGS",
++        "com.google.android.gms.location.settings.GOOGLE_LOCATION_SETTINGS",
++        "com.google.android.gms.location.settings.LOCATION_HISTORY",
++        "com.google.android.gms.location.settings.LOCATION_REPORTING_SETTINGS",
++        "com.google.android.gms.location.settings.LOCATION_SHARING",
++        "com.google.android.gms.locationsharing.api.START",
++        "com.google.android.gms.locationsharingreporter.service.START",
++        "com.google.android.gms.lockbox.service.START",
++        "com.google.android.gms.matchstick.lighter.service.START",
++        "com.google.android.gms.mdm.services.DeviceManagerApiService.START",
++        "com.google.android.gms.mdm.services.START",
++        "com.google.android.gms.mdns.service.START",
++        "com.google.android.gms.measurement.START",
++        "com.google.android.gms.mlkit.ACTION_SCAN_BARCODE",
++        "com.google.android.gms.nearby.bootstrap.service.NearbyBootstrapService.START",
++        "com.google.android.gms.nearby.connection.service.START",
++        "com.google.android.gms.nearby.exposurenotification.START",
++        "com.google.android.gms.nearby.fastpair.START",
++        "com.google.android.gms.nearby.messages.service.NearbyMessagesService.START",
++        "com.google.android.gms.nearby.sharing.START_SERVICE",
++        "com.google.android.gms.nearby.sharing.service.NearbySharingService.START",
++        "com.google.android.gms.notifications.service.START",
++        "com.google.android.gms.ocr.service.START",
++        "com.google.android.gms.ocr.service.internal.START",
++        "com.google.android.gms.oss.licenses.service.START",
++        "com.google.android.gms.panorama.service.START",
++        "com.google.android.gms.pay.PAY",
++        "com.google.android.gms.pay.PAY_OPTIONAL",
++        "com.google.android.gms.pay.service.BIND",
++        "com.google.android.gms.pay.service.THIRD_PARTY",
++        "com.google.android.gms.payse.service.BIND",
++        "com.google.android.gms.people.contactssync.service.START",
++        "com.google.android.gms.people.service.START",
++        "com.google.android.gms.phenotype.service.START",
++        "com.google.android.gms.photos.autobackup.service.START",
++        "com.google.android.gms.playlog.service.START",
++        "com.google.android.gms.plus.service.START",
++        "com.google.android.gms.plus.service.default.INTENT",
++        "com.google.android.gms.plus.service.image.INTENT",
++        "com.google.android.gms.plus.service.internal.START",
++        "com.google.android.gms.potokens.service.START",
++        "com.google.android.gms.pseudonymous.service.START",
++        "com.google.android.gms.rcs.START",
++        "com.google.android.gms.recaptcha.service.START",
++        "com.google.android.gms.reminders.service.START",
++        "com.google.android.gms.romanesco.MODULE_BACKUP_AGENT",
++        "com.google.android.gms.romanesco.service.START",
++        "com.google.android.gms.safetynet.service.START",
++        "com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE",
++        "com.google.android.gms.search.service.SEARCH_AUTH_START",
++        "com.google.android.gms.semanticlocation.service.START_ODLH",
++        "com.google.android.gms.semanticlocationhistory.service.START",
++        "com.google.android.gms.sesame.service.BIND",
++        "com.google.android.gms.settings.ADM_SETTINGS",
++        "com.google.android.gms.settings.EXPOSURE_NOTIFICATION_SETTINGS",
++        "com.google.android.gms.settings.FIND_MY_DEVICE_SETTINGS",
++        "com.google.android.gms.setup.auth.SecondDeviceAuth.START",
++        "com.google.android.gms.signin.service.START",
++        "com.google.android.gms.smartdevice.d2d.SourceDeviceService.START",
++        "com.google.android.gms.smartdevice.d2d.TargetDeviceService.START",
++        "com.google.android.gms.smartdevice.directtransfer.SourceDirectTransferService.START",
++        "com.google.android.gms.smartdevice.directtransfer.TargetDirectTransferService.START",
++        "com.google.android.gms.smartdevice.postsetup.PostSetupService.START",
++        "com.google.android.gms.smartdevice.setup.accounts.AccountsService.START",
++        "com.google.android.gms.smartdevice.wifi.START_WIFI_HELPER_SERVICE",
++        "com.google.android.gms.social.location.activity.service.START",
++        "com.google.android.gms.speech.service.START",
++        "com.google.android.gms.statementservice.EXECUTE",
++        "com.google.android.gms.stats.ACTION_UPLOAD_DROPBOX_ENTRIES",
++        "com.google.android.gms.tapandpay.service.BIND",
++        "com.google.android.gms.telephonyspam.service.START",
++        "com.google.android.gms.testsupport.service.START",
++        "com.google.android.gms.threadnetwork.service.START",
++        "com.google.android.gms.thunderbird.service.START",
++        "com.google.android.gms.trustagent.BridgeApi.START",
++        "com.google.android.gms.trustagent.StateApi.START",
++        "com.google.android.gms.trustagent.trustlet.trustletmanagerservice.BIND",
++        "com.google.android.gms.trustlet.bluetooth.service.BIND",
++        "com.google.android.gms.trustlet.connectionlessble.service.BIND",
++        "com.google.android.gms.trustlet.face.service.BIND",
++        "com.google.android.gms.trustlet.nfc.service.BIND",
++        "com.google.android.gms.trustlet.onbody.service.BIND",
++        "com.google.android.gms.trustlet.place.service.BIND",
++        "com.google.android.gms.trustlet.voiceunlock.service.BIND",
++        "com.google.android.gms.udc.service.START",
++        "com.google.android.gms.update.START_API_SERVICE",
++        "com.google.android.gms.update.START_SERVICE",
++        "com.google.android.gms.update.START_SINGLE_USER_API_SERVICE",
++        "com.google.android.gms.update.START_TV_API_SERVICE",
++        "com.google.android.gms.usagereporting.service.START",
++        "com.google.android.gms.userlocation.service.START",
++        "com.google.android.gms.vehicle.cabin.service.START",
++        "com.google.android.gms.vehicle.climate.service.START",
++        "com.google.android.gms.vehicle.info.service.START",
++        "com.google.android.gms.wallet.firstparty.ACTION_PURCHASE_MANAGER",
++        "com.google.android.gms.wallet.service.BIND",
++        "com.google.android.gms.walletp2p.service.firstparty.BIND",
++        "com.google.android.gms.walletp2p.service.zeroparty.BIND",
++        "com.google.android.gms.wearable.BIND",
++        "com.google.android.gms.wearable.BIND_LISTENER",
++        "com.google.android.gms.wearable.DATA_CHANGED",
++        "com.google.android.gms.wearable.MESSAGE_RECEIVED",
++        "com.google.android.gms.wearable.NODE_CHANGED",
++        "com.google.android.gms.wearable.TOS",
++        "com.google.android.location.GeocodeProvider",
++        "com.google.android.location.internal.GoogleLocationManagerService.START",
++        "com.google.android.location.reporting.service.START",
++        "com.google.android.location.settings.GOOGLE_LOCATION_SETTINGS",
++        "com.google.android.location.settings.LOCATION_REPORTING_SETTINGS",
++        "com.google.android.mdd.service.START",
++        "com.google.android.mdh.service.START",
++        "com.google.android.mdh.service.listener.START",
++        "com.google.android.mobstore.service.START",
++        "com.google.gms.auth.credentials.GOOGLE_ID_PROXY_INTENT",
++        "com.google.gms.fido.AUTHENTICATE",
++        "com.google.gms.gcm.CONNECTED",
++        "com.google.gms.gcm.MESSAGE_RECEIVE",
++        "com.google.gms.gcm.NOTIFY_COMPLETE",
++        "com.google.gms.gcm.RECONNECT",
++        "com.google.gms.gcm.REGISTER_ACCOUNT",
++        "com.google.gms.gcm.REGISTER_ALL_ACCOUNTS",
++        "com.google.gms.nearby.exposurenotification.CONFIRM",
++        "com.google.gms.safetynet.RECAPTCHA_ACTIVITY",
++        "com.google.gms.settings.CHECKIN_SETTINGS",
++        "com.google.gms.settings.GCM_SETTINGS",
++        "com.google.gms.settings.MICROG_APP_GCM_SETTINGS",
++        "com.google.iid.TOKEN_REQUEST",
++    )
++
++    val PERMISSIONS = setOf(
++        "com.google.android.c2dm.permission.RECEIVE",
++        "com.google.android.c2dm.permission.SEND",
++        "com.google.android.gms.auth.api.phone.permission.SEND",
++        "com.google.android.gms.auth.permission.GOOGLE_ACCOUNT_CHANGE",
++        "com.google.android.gms.locationsharingreporter.periodic.STATUS_UPDATE",
++        "com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK",
++        "com.google.android.gms.permission.ACTIVITY_RECOGNITION",
++        "com.google.android.gms.permission.AD_ID",
++        "com.google.android.gms.permission.AD_ID_NOTIFICATION",
++        "com.google.android.gms.permission.CAR_FUEL",
++        "com.google.android.gms.permission.CAR_MILEAGE",
++        "com.google.android.gms.permission.CAR_SPEED",
++        "com.google.android.gms.permission.CAR_VENDOR_EXTENSION",
++        "com.google.android.googleapps.permission.GOOGLE_AUTH.cp",
++        "com.google.android.googleapps.permission.GOOGLE_AUTH.local",
++        "com.google.android.googleapps.permission.GOOGLE_AUTH.mail",
++        "com.google.android.googleapps.permission.GOOGLE_AUTH.writely",
++        "com.google.android.gtalkservice.permission.GTALK_SERVICE",
++        "com.google.android.providers.gsf.permission.READ_GSERVICES",
++        "com.google.gms.EXTENDED_ACCESS",
++        "com.google.gms.PROVISION",
++        "com.google.gms.STATUS_BROADCAST",
++    )
++
++    val AUTHORITIES = setOf(
++        "com.google.android.gms.auth.accounts",
++        "com.google.android.gms.chimera",
++        "com.google.android.gms.fileprovider",
++        "com.google.android.gms.fonts",
++        "com.google.android.gms.phenotype",
++        "com.google.android.gsf.gservices",
++        "com.google.android.gsf.subscribedfeeds",
++        "com.google.gms.maps.vtm.tile",
++        "com.google.settings",
++    )
++}
+diff --git a/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/UniversalMicroGSupportPatch.kt b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/UniversalMicroGSupportPatch.kt
+new file mode 100644
+index 0000000..de64a4a
+--- /dev/null
++++ b/patch-library/src/main/kotlin/app/morphe/patches/all/misc/microg/UniversalMicroGSupportPatch.kt
+@@ -0,0 +1,249 @@
++package app.morphe.patches.all.misc.microg
++
++import app.morphe.patcher.StringComparisonType
++import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
++import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
++import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
++import app.morphe.patcher.patch.mutableClassDefBy
++import app.morphe.patcher.patch.packageMetadata
++import app.morphe.patcher.patch.patch
++import app.morphe.patcher.patch.replaceStrings
++import app.morphe.patcher.patch.resourceXml
++import app.morphe.patcher.string
++import app.morphe.patcher.util.matchAllMethodIndicesForEach
++import app.morphe.patcher.util.proxy.mutableTypes.encodedValue.MutableStringEncodedValue
++import app.morphe.patcher.util.returnEarly
++import app.morphe.patches.all.misc.gms.gmsCorePackageQueriesPatch
++import app.morphe.util.getEndEntityCertificate
++import com.android.tools.smali.dexlib2.AccessFlags
++import com.android.tools.smali.dexlib2.Opcode
++import com.android.tools.smali.dexlib2.iface.Method
++import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
++import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
++import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
++import com.android.tools.smali.dexlib2.iface.reference.MethodReference
++import java.security.MessageDigest
++
++internal const val MICROG_EXTENSION_PACKAGE = "Lapp/morphe/extension/microg/"
++internal const val MICROG_BRIDGE_CLASS = "${MICROG_EXTENSION_PACKAGE}MicroGBridge;"
++private const val MICROG_INIT_PROVIDER = "app.morphe.extension.microg.MicroGInitProvider"
++
++/** GmsCompat-Stub app package (see gmscompat-stub/). */
++const val GMSCOMPAT_STUB_PACKAGE = "app.morphe.gmscompat"
++
++private const val GOOGLE_PREFIX = "com.google"
++private const val GMS_PACKAGE = "com.google.android.gms"
++private const val PACKAGE_INFO_FLAGS = "Landroid/content/pm/PackageManager\$PackageInfoFlags;"
++
++/** v0 is only free at method entry if the method has at least one non-parameter register. */
++private fun Method.hasFreeRegister(): Boolean {
++    val registers = implementation?.registerCount ?: return false
++    val parameterRegisters = parameterTypes.map { it.toString() }.sumOf { if (it == "J" || it == "D") 2L else 1L }.toInt() +
++        if (AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
++    return registers > parameterRegisters
++}
++
++/** Default vendor prefix: MicroG-RE / ReVanced GmsCore (app.revanced.android.gms). */
++const val MICROG_DEFAULT_VENDOR = "app.revanced"
++
++/** Vendor prefixes offered to users. com.google means microG installed under Google's own name. */
++val MICROG_VENDORS = mapOf(
++    "MicroG-RE / ReVanced GmsCore (app.revanced.android.gms)" to MICROG_DEFAULT_VENDOR,
++    "Vanced microG (com.mgoogle.android.gms)" to "com.mgoogle",
++    "microG as com.google.android.gms (needs signature spoofing ROM)" to GOOGLE_PREFIX,
++)
++
++/**
++ * Settings of [universalMicroGSupportPatch], read when the patch executes so a wrapping patch can
++ * back them with its own options.
++ */
++class MicroGSupportSettings(
++    val vendor: () -> String = { MICROG_DEFAULT_VENDOR },
++    val spoofIdentity: () -> Boolean = { true },
++    val forceAvailable: () -> Boolean = { true },
++    val useStub: () -> Boolean = { true },
++    val prompts: () -> Boolean = { true },
++)
++
++/**
++ * Makes any app that uses Google Play services work with a user-installed microG, without root and
++ * without app-specific fingerprints. See docs/PLAN.md of the microg-universal project.
++ */
++fun universalMicroGSupportPatch(settings: MicroGSupportSettings = MicroGSupportSettings()) = patch(
++    default = false,
++) {
++    dependsOn(gmsCorePackageQueriesPatch)
++    extendWith("generated/extensions/microg.dex")
++
++    execute {
++        val prefix = settings.vendor()
++        val renaming = prefix != GOOGLE_PREFIX
++        val gmsPackage = "$prefix.android.gms"
++        fun rename(name: String) = prefix + name.removePrefix(GOOGLE_PREFIX)
++
++        // region Bytecode strings (one pass over all classes).
++
++        val renamed: Map<String, String> = if (renaming) buildMap {
++            put(GOOGLE_PREFIX, prefix) // Account type.
++            put(GMS_PACKAGE, gmsPackage)
++            (MicroGConstants.ACTIONS + MicroGConstants.PERMISSIONS + MicroGConstants.AUTHORITIES)
++                .forEach { put(it, rename(it)) }
++        } else emptyMap()
++
++        val contentUriPrefixes = MicroGConstants.AUTHORITIES.map { "content://$it" }
++        val placeholders = mapOf(
++            "MICROG_GMS_PACKAGE_PLACEHOLDER" to gmsPackage,
++            "MICROG_STUB_ENABLED_PLACEHOLDER" to settings.useStub().toString(),
++            "MICROG_PROMPTS_ENABLED_PLACEHOLDER" to settings.prompts().toString(),
++        )
++
++        val filters = buildList {
++            (renamed.keys + placeholders.keys).forEach { add(string(it)) }
++            if (renaming) add(string("content://$GOOGLE_PREFIX", StringComparisonType.STARTS_WITH))
++        }
++        replaceStrings(filters) { method, _, value ->
++            if (method.definingClass.startsWith(MICROG_EXTENSION_PACKAGE)) return@replaceStrings placeholders[value]
++            renamed[value] ?: contentUriPrefixes.firstOrNull { value.startsWith(it) }?.let { uriPrefix ->
++                "content://" + rename(uriPrefix.removePrefix("content://")) + value.removePrefix(uriPrefix)
++            }
++        }
++
++        // d8 may store the placeholders as static field initial values instead of const-strings.
++        mutableClassDefBy(MICROG_BRIDGE_CLASS).staticFields.forEach { field ->
++            val value = field.initialValue as? MutableStringEncodedValue ?: return@forEach
++            placeholders[value.value]?.let { value.value = it }
++        }
++
++        // endregion
++
++        // region GmsCore signature as seen by the client library (obfuscation-proof).
++
++        MicroGGetPackageInfoFingerprint.matchAllMethodIndicesForEach(requireMatches = false) { index ->
++            val instruction = getInstruction(index)
++            val reference = (instruction as ReferenceInstruction).reference as MethodReference
++            val params = reference.parameterTypes.map { it.toString() }
++            if (params.size != 2 || params[0] != "Ljava/lang/String;" ||
++                (params[1] != "I" && params[1] != PACKAGE_INFO_FLAGS)
++            ) return@matchAllMethodIndicesForEach
++
++            val target = "$MICROG_BRIDGE_CLASS->getPackageInfo(Landroid/content/pm/PackageManager;" +
++                "${params[0]}${params[1]})Landroid/content/pm/PackageInfo;"
++            val smali = when (instruction.opcode) {
++                Opcode.INVOKE_VIRTUAL -> {
++                    val r = instruction as FiveRegisterInstruction
++                    "invoke-static { v${r.registerC}, v${r.registerD}, v${r.registerE} }, $target"
++                }
++                Opcode.INVOKE_VIRTUAL_RANGE -> {
++                    val r = instruction as RegisterRangeInstruction
++                    "invoke-static/range { v${r.startRegister} .. v${r.startRegister + r.registerCount - 1} }, $target"
++                }
++                else -> return@matchAllMethodIndicesForEach
++            }
++            replaceInstruction(index, smali)
++        }
++
++        // endregion
++
++        // region Availability checks (belt and braces for libraries that bypass PackageManager calls).
++
++        if (settings.forceAvailable()) {
++            listOf(IsGooglePlayServicesAvailableFingerprint, LegacyIsGooglePlayServicesAvailableFingerprint)
++                .flatMap { it.matchAllOrNull().orEmpty() }
++                .map { it.method }
++                .distinct()
++                .filter { it.hasFreeRegister() }
++                .forEach { method ->
++                    method.addInstructionsWithLabels(
++                        0,
++                        """
++                            invoke-static { }, $MICROG_BRIDGE_CLASS->forcePlayServicesAvailable()Z
++                            move-result v0
++                            if-eqz v0, :check_original
++                            const/4 v0, 0x0
++                            return v0
++                            :check_original
++                            nop
++                        """
++                    )
++                }
++
++            EnsurePlayServicesAvailableFingerprint.matchAllOrNull().orEmpty().map { it.method }.distinct()
++                .filter { it.hasFreeRegister() }
++                .forEach { method ->
++                    method.addInstructionsWithLabels(
++                        0,
++                        """
++                            invoke-static { }, $MICROG_BRIDGE_CLASS->forcePlayServicesAvailable()Z
++                            move-result v0
++                            if-eqz v0, :check_original
++                            return-void
++                            :check_original
++                            nop
++                        """
++                    )
++                }
++        }
++
++        // endregion
++
++        // region Manifest.
++
++        val originalPackage = packageMetadata.packageName
++        val certSha1 = runCatching {
++            MessageDigest.getInstance("SHA-1")
++                .digest(getEndEntityCertificate(packageMetadata.signingCertificates).encoded)
++                .joinToString("") { "%02x".format(it) }
++        }.getOrNull()
++
++        resourceXml("AndroidManifest.xml").use { manifest ->
++            val manifestPackage = manifest.root.attribute("package") ?: originalPackage
++
++            if (renaming) {
++                manifest.elements().forEach { element ->
++                    element.attributeNames.forEach { name ->
++                        val value = element.attribute(name) ?: return@forEach
++                        // Own manifest meta-data keys (com.google.android.gms.version, ...) stay as they are.
++                        if (element.tag == "meta-data" && name == "android:name") return@forEach
++                        val replaced = renamed[value]
++                            ?: value.replace("$GOOGLE_PREFIX.android.c2dm", "$prefix.android.c2dm")
++                        if (replaced != value) element.setAttribute(name, replaced)
++                    }
++                }
++            }
++
++            // Installing must not fail on devices without Google's shared libraries.
++            manifest.elements("uses-library")
++                .filter { it.attribute("android:name")?.startsWith("$GOOGLE_PREFIX.") == true }
++                .forEach { it.setAttribute("android:required", "false") }
++
++            val queries = manifest.elements("queries").firstOrNull() ?: manifest.root.appendChild("queries")
++            listOf(gmsPackage, "com.android.vending", GMSCOMPAT_STUB_PACKAGE).forEach { pkg ->
++                queries.appendChild("package") { setAttribute("android:name", pkg) }
++            }
++
++            val application = manifest.elements("application").first()
++            if (settings.spoofIdentity()) {
++                application.appendChild("meta-data") {
++                    setAttribute("android:name", "$gmsPackage.SPOOFED_PACKAGE_NAME")
++                    setAttribute("android:value", originalPackage)
++                }
++                if (certSha1 != null) application.appendChild("meta-data") {
++                    setAttribute("android:name", "$gmsPackage.SPOOFED_PACKAGE_SIGNATURE")
++                    setAttribute("android:value", certSha1)
++                }
++            }
++            application.appendChild("meta-data") {
++                setAttribute("android:name", "app.revanced.MICROG_PACKAGE_NAME")
++                setAttribute("android:value", gmsPackage)
++            }
++            application.appendChild("provider") {
++                setAttribute("android:name", MICROG_INIT_PROVIDER)
++                setAttribute("android:authorities", "$manifestPackage.morphe-microg-init")
++                setAttribute("android:exported", "false")
++                setAttribute("android:initOrder", "1000")
++            }
++        }
++
++        // endregion
++    }
++}
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+index ea142ac..0c6cc0b 100644
+--- a/settings.gradle.kts
++++ b/settings.gradle.kts
+@@ -51,6 +51,7 @@ dependencyResolutionManagement {
+ 
+ include(":extension-library")
+ include(":extensions:signature")
++include(":extensions:microg")
+ include(":patch-library")
+ 
+ // Include morphe-patcher as composite build if it exists locally
