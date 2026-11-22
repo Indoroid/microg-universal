@@ -7,3 +7,4 @@ out/deps/test.keystore
 out/deps/
 out/real/
 out/device/*.logcat.txt
+out/release/
