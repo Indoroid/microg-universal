@@ -19,7 +19,7 @@ fi
 $ADB logcat -c
 ACT=$($ADB shell cmd package resolve-activity --brief -c android.intent.category.LAUNCHER "$PKG" | tail -1 | tr -d '\r')
 echo "[$LABEL] launch $ACT"
-$ADB shell am start -W -n "$ACT" 2>&1 | grep -E "Status|TotalTime|Error" | tr '\n' ' '; echo
+timeout 240 $ADB shell am start -W -n "$ACT" 2>&1 | grep -E "Status|TotalTime|Error" | tr '\n' ' '; echo
 sleep "$WAIT"
 PID=$($ADB shell pidof "$PKG" | tr -d '\r')
 echo "[$LABEL] running: ${PID:-NO}"
@@ -28,4 +28,10 @@ echo "[$LABEL] crashes: $(grep -c 'FATAL EXCEPTION' "$OUT/$LABEL.logcat.txt")"
 grep -E "FATAL EXCEPTION|AndroidRuntime: (Process|java|Caused)" "$OUT/$LABEL.logcat.txt" | head -6 | sed "s/^/[$LABEL]   /"
 grep -E "requires Google Play services|Google Play services (is missing|out of date)|GooglePlayServicesUtil|MorpheMicroG|SERVICE_MISSING|ConnectionResult" "$OUT/$LABEL.logcat.txt" \
   | sed 's/^.\{19\}//' | sort | uniq -c | sort -rn | head -8 | sed "s/^/[$LABEL]   /"
+# Under software emulation system_server often raises "isn't responding"; answer Wait before capturing.
+for i in 1 2 3; do
+  $ADB shell dumpsys window windows 2>/dev/null | grep -q "Application Not Responding\|isn't responding" || break
+  $ADB shell input tap 336 1240; sleep 5
+done
+$ADB shell am start -n "$ACT" >/dev/null 2>&1; sleep 10
 $ADB exec-out screencap -p > "$OUT/$LABEL.png" && echo "[$LABEL] screenshot: $OUT/$LABEL.png"

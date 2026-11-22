@@ -26,8 +26,10 @@ with zipfile.ZipFile(orig) as src, zipfile.ZipFile(dest, "w") as dst:
         dst.write(path, name, compress_type=zipfile.ZIP_DEFLATED)
 EOF
 
-KS=$WORK/test.keystore
-keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias test \
+# One persistent test key, so repacked builds update each other on a device.
+KS=${KS:-$(dirname "$0")/../out/deps/test.keystore}
+mkdir -p "$(dirname "$KS")"
+[ -f "$KS" ] || keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias test \
   -keyalg RSA -keysize 2048 -validity 1000 -dname "CN=microg-universal-test" >/dev/null 2>&1
 "$BT/zipalign" -f -p 4 "$WORK/unsigned.apk" "$WORK/aligned.apk"
 "$BT/apksigner" sign --ks "$KS" --ks-pass pass:android --out "$DEST" "$WORK/aligned.apk"

@@ -3,6 +3,9 @@ import app.morphe.patcher.PatcherConfig
 import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.resourceXml
+import app.morphe.patcher.patch.replaceStrings
+import app.morphe.patcher.string
+import app.morphe.patcher.StringComparisonType
 import app.morphe.patches.all.misc.microg.MicroGSupportSettings
 import app.morphe.patches.all.misc.microg.universalMicroGSupportPatch
 import kotlinx.coroutines.runBlocking
@@ -13,11 +16,32 @@ import java.io.File
  * preinstalled Google-signed system copy of itself.
  */
 private val testClonePatch = patch {
+    // Hard-coded own provider authorities in code must follow the manifest rename, otherwise a clone
+    // queries the original app's (protected) provider.
+    execute {
+        val old = packageMetadata.packageName
+        val new = "$old.morphe"
+        val authorities = resourceXml("AndroidManifest.xml").use { m ->
+            m.elements("provider").flatMap { it.attribute("android:authorities").orEmpty().split(';') }
+                .filter { it.isNotEmpty() && !it.startsWith("@") }.toSet()
+        }
+        fun renamed(a: String) = if (a.startsWith("$old.")) a.replaceFirst(old, new) else "${new}_$a"
+        val map = authorities.associateWith(::renamed)
+        val filters = map.keys.map { string(it) } + string("content://", StringComparisonType.STARTS_WITH)
+        val n = replaceStrings(filters) { method, _, value ->
+            if (method.definingClass.startsWith("Lapp/morphe/extension/")) return@replaceStrings null
+            map[value] ?: map.keys.firstOrNull { value.startsWith("content://$it") }
+                ?.let { "content://" + map[it] + value.removePrefix("content://$it") }
+        }
+        println("clone: ${map.size} authorities, $n strings rewritten")
+    }
     finalize {
         val old = packageMetadata.packageName
         val new = "$old.morphe"
         resourceXml("AndroidManifest.xml").use { manifest ->
             manifest.root.setAttribute("package", new)
+            // A re-signed clone can not join the original's shared UID.
+            manifest.root.attribute("android:sharedUserId")?.let { manifest.root.setAttribute("android:sharedUserId", "$it.morphe") }
             val uses = manifest.elements("uses-permission").toList()
             manifest.elements("permission").forEach {
                 val name = it.attribute("android:name").orEmpty()

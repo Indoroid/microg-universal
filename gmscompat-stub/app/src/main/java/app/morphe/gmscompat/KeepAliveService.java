@@ -74,14 +74,14 @@ public final class KeepAliveService extends Service {
         NotificationManager nm = getSystemService(NotificationManager.class);
         Notification.Builder b;
         if (Build.VERSION.SDK_INT >= 26) {
-            nm.createNotificationChannel(new NotificationChannel(CHANNEL, "Keep microG alive",
+            nm.createNotificationChannel(new NotificationChannel(CHANNEL, getString(R.string.channel_keepalive),
                     NotificationManager.IMPORTANCE_MIN));
             b = new Notification.Builder(this, CHANNEL);
         } else {
             b = new Notification.Builder(this);
         }
-        b.setSmallIcon(android.R.drawable.stat_notify_sync)
-                .setContentTitle(gms != null ? "Keeping " + gms.label() + " running" : "microG not found")
+        b.setSmallIcon(R.drawable.ic_stat_microg)
+                .setContentTitle(gms != null ? getString(R.string.notif_keepalive, gms.label()) : getString(R.string.notif_missing_title))
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(this, 0,
                         new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));

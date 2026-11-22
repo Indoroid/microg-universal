@@ -16,7 +16,12 @@ public class MainActivity extends Activity {
         t.setText("isGooglePlayServicesAvailable = " + code);
         setContentView(t);
         if (code != 0) api.getErrorDialog(this, code, 0).show();
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task ->
-                t.append("\nFCM: " + (task.isSuccessful() ? task.getResult() : task.getException())));
+        try {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task ->
+                    t.append("\nFCM: " + (task.isSuccessful() ? task.getResult() : task.getException())));
+        } catch (IllegalStateException e) {
+            // No google-services.json in this test client: FCM is out of scope, only availability is tested.
+            t.append("\nFCM: not configured");
+        }
     }
 }

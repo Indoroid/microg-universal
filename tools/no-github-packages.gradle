@@ -1,0 +1,6 @@
+// The Morphe repos list GitHub Packages, which needs a token even for public artifacts.
+// Everything they need is in mavenLocal (patcher built from source) or jitpack, so drop it.
+settingsEvaluated { s ->
+    s.dependencyResolutionManagement.repositories.removeIf { it.name == "GitHubPackages" }
+    s.pluginManagement.repositories.removeIf { it.name == "GitHubPackages" }
+}

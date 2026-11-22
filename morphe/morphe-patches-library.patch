@@ -87,37 +87,181 @@ index 0000000..9b65eb0
 +++ b/extensions/microg/src/main/AndroidManifest.xml
 @@ -0,0 +1 @@
 +<manifest/>
-diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java b/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java
+diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/M3Dialog.java b/extensions/microg/src/main/java/app/morphe/extension/microg/M3Dialog.java
 new file mode 100644
-index 0000000..6d416d2
+index 0000000..cc8d6b1
 --- /dev/null
-+++ b/extensions/microg/src/main/java/app/morphe/extension/microg/GoogleCert.java
-@@ -0,0 +1,15 @@
++++ b/extensions/microg/src/main/java/app/morphe/extension/microg/M3Dialog.java
+@@ -0,0 +1,160 @@
 +package app.morphe.extension.microg;
 +
-+/**
-+ * Original Google release certificate (SHA-1 38918a453d07199354f8b19af05ec6562ced5788,
-+ * SHA-256 f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83).
-+ * Extracted from Phonesky / GmsCore (NikGApps 2026-11-19) and identical to MicroG's
-+ * fake_signature. Rotated GmsCore builds keep it as the oldest lineage entry, which is what
-+ * GET_SIGNATURES and getSigningCertificateHistory()[0] report.
-+ */
-+final class GoogleCert {
-+    static final String DER_BASE64 = "MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK";
++import android.app.Activity;
++import android.app.Dialog;
++import android.content.Context;
++import android.content.res.ColorStateList;
++import android.content.res.Configuration;
++import android.graphics.Color;
++import android.graphics.Typeface;
++import android.graphics.drawable.ColorDrawable;
++import android.graphics.drawable.GradientDrawable;
++import android.graphics.drawable.RippleDrawable;
++import android.os.Build;
++import android.util.TypedValue;
++import android.view.Gravity;
++import android.view.ViewGroup;
++import android.view.Window;
++import android.widget.LinearLayout;
++import android.widget.TextView;
 +
-+    private GoogleCert() {
++/**
++ * Material 3 basic dialog drawn without any library, so it looks the same in every patched app
++ * whatever theme or toolkit that app uses, and matches the GmsCompat-Stub app.
++ * Colors: the system's Material You tonal palettes on Android 12+, the M3 baseline scheme before.
++ * Spec: 28dp corners, 24dp padding, headline small title, body medium supporting text,
++ * end-aligned text buttons, 280-560dp width.
++ */
++final class M3Dialog {
++    interface Action {
++        void run();
++    }
++
++    private M3Dialog() {
++    }
++
++    private static final class Scheme {
++        final int surface, onSurface, onSurfaceVariant, primary;
++
++        Scheme(int surface, int onSurface, int onSurfaceVariant, int primary) {
++            this.surface = surface;
++            this.onSurface = onSurface;
++            this.onSurfaceVariant = onSurfaceVariant;
++            this.primary = primary;
++        }
++    }
++
++    private static Scheme scheme(Context ctx) {
++        boolean dark = (ctx.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)
++                == Configuration.UI_MODE_NIGHT_YES;
++        if (Build.VERSION.SDK_INT >= 31) {
++            // surfaceContainerHigh ≈ N92 / N17, primary A40 / A80, onSurface N10 / N90, onSurfaceVariant NV30 / NV80.
++            return dark
++                    ? new Scheme(c(ctx, android.R.color.system_neutral1_800), c(ctx, android.R.color.system_neutral1_100),
++                    c(ctx, android.R.color.system_neutral2_200), c(ctx, android.R.color.system_accent1_200))
++                    : new Scheme(c(ctx, android.R.color.system_neutral1_50), c(ctx, android.R.color.system_neutral1_900),
++                    c(ctx, android.R.color.system_neutral2_700), c(ctx, android.R.color.system_accent1_600));
++        }
++        return dark
++                ? new Scheme(0xFF2B2930, 0xFFE6E0E9, 0xFFCAC4D0, 0xFFD0BCFF)
++                : new Scheme(0xFFECE6F0, 0xFF1D1B20, 0xFF49454F, 0xFF65558F);
++    }
++
++    private static int c(Context ctx, int id) {
++        return ctx.getColor(id);
++    }
++
++    static void show(Activity activity, String title, String message,
++                     String confirm, Action onConfirm,
++                     String dismiss,
++                     String neutral, Action onNeutral) {
++        Scheme s = scheme(activity);
++        Dialog dialog = new Dialog(activity);
++        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
++
++        LinearLayout root = new LinearLayout(activity);
++        root.setOrientation(LinearLayout.VERTICAL);
++        int p = dp(activity, 24);
++        root.setPadding(p, p, p, dp(activity, 18));
++        GradientDrawable bg = new GradientDrawable();
++        bg.setColor(s.surface);
++        bg.setCornerRadius(dp(activity, 28));
++        root.setBackground(bg);
++
++        TextView titleView = text(activity, title, 24, s.onSurface, false);
++        root.addView(titleView);
++
++        TextView body = text(activity, message, 14, s.onSurfaceVariant, false);
++        body.setLineSpacing(0f, 1.43f); // 20sp line height
++        LinearLayout.LayoutParams bodyLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
++                ViewGroup.LayoutParams.WRAP_CONTENT);
++        bodyLp.topMargin = dp(activity, 16);
++        root.addView(body, bodyLp);
++
++        LinearLayout buttons = new LinearLayout(activity);
++        buttons.setOrientation(LinearLayout.HORIZONTAL);
++        buttons.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
++        LinearLayout.LayoutParams buttonsLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
++                ViewGroup.LayoutParams.WRAP_CONTENT);
++        buttonsLp.topMargin = dp(activity, 24);
++        root.addView(buttons, buttonsLp);
++
++        if (neutral != null) {
++            buttons.addView(button(activity, s, neutral, () -> {
++                dialog.dismiss();
++                if (onNeutral != null) onNeutral.run();
++            }));
++            // Neutral action sits at the start, the others at the end.
++            buttons.addView(new android.view.View(activity), new LinearLayout.LayoutParams(0, 1, 1f));
++        }
++        if (dismiss != null) buttons.addView(button(activity, s, dismiss, dialog::dismiss));
++        buttons.addView(button(activity, s, confirm, () -> {
++            dialog.dismiss();
++            if (onConfirm != null) onConfirm.run();
++        }));
++
++        dialog.setContentView(root);
++        Window w = dialog.getWindow();
++        if (w != null) {
++            w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
++            int screen = activity.getResources().getDisplayMetrics().widthPixels;
++            int width = Math.max(dp(activity, 280), Math.min(dp(activity, 560), screen - dp(activity, 48)));
++            w.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
++        }
++        dialog.show();
++    }
++
++    private static TextView text(Context ctx, String value, int sp, int color, boolean medium) {
++        TextView t = new TextView(ctx);
++        t.setText(value);
++        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
++        t.setTextColor(color);
++        t.setTypeface(Typeface.create(medium ? "sans-serif-medium" : "sans-serif", Typeface.NORMAL));
++        return t;
++    }
++
++    private static TextView button(Context ctx, Scheme s, String label, Action action) {
++        TextView b = text(ctx, label, 14, s.primary, true);
++        b.setLetterSpacing(0.00714f);
++        b.setGravity(Gravity.CENTER);
++        b.setMinHeight(dp(ctx, 40));
++        b.setMinWidth(dp(ctx, 48));
++        b.setPadding(dp(ctx, 12), 0, dp(ctx, 12), 0);
++        GradientDrawable mask = new GradientDrawable();
++        mask.setColor(Color.WHITE);
++        mask.setCornerRadius(dp(ctx, 20));
++        int pressed = (s.primary & 0x00FFFFFF) | 0x1F000000; // 12% state layer
++        b.setBackground(new RippleDrawable(ColorStateList.valueOf(pressed), null, mask));
++        b.setClickable(true);
++        b.setFocusable(true);
++        b.setOnClickListener(v -> action.run());
++        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(ctx, 40));
++        lp.setMarginStart(dp(ctx, 8));
++        b.setLayoutParams(lp);
++        return b;
++    }
++
++    private static int dp(Context ctx, int v) {
++        return Math.round(v * ctx.getResources().getDisplayMetrics().density);
 +    }
 +}
 diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java
 new file mode 100644
-index 0000000..457972a
+index 0000000..90d7e3a
 --- /dev/null
 +++ b/extensions/microg/src/main/java/app/morphe/extension/microg/MicroGBridge.java
-@@ -0,0 +1,291 @@
+@@ -0,0 +1,280 @@
 +package app.morphe.extension.microg;
 +
 +import android.app.Activity;
-+import android.app.AlertDialog;
 +import android.app.Application;
 +import android.content.Context;
 +import android.content.Intent;
@@ -134,6 +278,8 @@ index 0000000..457972a
 +import android.os.PowerManager;
 +import android.util.Base64;
 +import android.util.Log;
++
++import app.morphe.extension.microg.contract.MicroGContract;
 +
 +/**
 + * Runtime half of the universal microG patch: the in-app equivalent of GrapheneOS'
@@ -156,14 +302,7 @@ index 0000000..457972a
 +    private static final String VENDING_PACKAGE = "com.android.vending";
 +    private static final String CLIENT_VERSION_METADATA = "com.google.android.gms" + ".version";
 +
-+    // GmsCompat-Stub contract. Must match the stub app.
-+    static final String STUB_PACKAGE = "app.morphe.gmscompat";
-+    static final Uri STUB_BROKER = Uri.parse("content://app.morphe.gmscompat.broker");
-+    static final String STUB_ACTION_SETUP = "app.morphe.gmscompat.action.SETUP";
-+    static final String STUB_CALL_STATUS = "status";
-+    static final String STUB_CALL_REGISTER = "register";
 +
-+    private static final String MICROG_DOWNLOAD_URL = "https://github.com/MorpheApp/MicroG-RE/releases/latest";
 +    private static final String PREFS = "morphe_microg";
 +    private static final String PREF_DONT_ASK = "dont_ask";
 +
@@ -222,7 +361,7 @@ index 0000000..457972a
 +    private static Signature googleSignature() {
 +        Signature s = googleSignature;
 +        if (s == null) {
-+            s = new Signature(Base64.decode(GoogleCert.DER_BASE64, Base64.DEFAULT));
++            s = new Signature(Base64.decode(MicroGContract.GOOGLE_CERT_DER_BASE64, Base64.DEFAULT));
 +            googleSignature = s;
 +        }
 +        return s;
@@ -285,20 +424,19 @@ index 0000000..457972a
 +        if (!isMainProcess()) return;
 +
 +        boolean installed = isMicroGInstalled();
-+        Bundle stub = Boolean.parseBoolean(STUB_ENABLED) ? callStub(STUB_CALL_REGISTER) : null;
-+        boolean stubHandlesPrompts = stub != null && stub.getBoolean("prompts_handled", false);
++        Bundle stub = Boolean.parseBoolean(STUB_ENABLED) ? callStub(MicroGContract.CALL_REGISTER) : null;
++        boolean stubHandlesPrompts = stub != null && stub.getBoolean(MicroGContract.KEY_PROMPTS_HANDLED, false);
 +        Log.i(TAG, "microG " + GMS_PACKAGE + " installed=" + installed + ", stub=" + (stub != null));
 +
 +        if (!Boolean.parseBoolean(PROMPTS_ENABLED) || stubHandlesPrompts) return;
 +
 +        String message = null;
 +        if (!installed) {
-+            message = "This app was patched to use microG instead of Google Play services, "
-+                    + "but microG (" + GMS_PACKAGE + ") is not installed. "
-+                    + "Sign-in, push notifications and maps will not work until it is installed.";
++            message = "This app uses microG instead of Google Play services. Install MicroG-RE ("
++                    + GMS_PACKAGE + ") for sign-in, push notifications and maps.";
 +        } else if (isBatteryOptimized()) {
-+            message = "microG is restricted by battery optimization. Push notifications "
-+                    + "may be delayed or missing. Allow microG to run in the background.";
++            message = "Battery optimization limits microG, so push notifications may be delayed "
++                    + "or missing. Allow microG to run in the background.";
 +        }
 +        if (message != null && !prefs().getBoolean(PREF_DONT_ASK, false)) {
 +            showOnFirstActivity(message, !installed);
@@ -308,7 +446,7 @@ index 0000000..457972a
 +    private static Bundle callStub(String method) {
 +        Context ctx = context();
 +        try {
-+            return ctx.getContentResolver().call(STUB_BROKER, method, ctx.getPackageName(), null);
++            return ctx.getContentResolver().call(Uri.parse(MicroGContract.BROKER_URI), method, ctx.getPackageName(), null);
 +        } catch (Exception e) {
 +            // Stub not installed or not visible. Patched apps work without it.
 +            return null;
@@ -354,21 +492,17 @@ index 0000000..457972a
 +    private static void show(Activity activity, String message, boolean missing) {
 +        if (activity.isFinishing()) return;
 +        try {
-+            new AlertDialog.Builder(activity)
-+                    .setTitle("microG")
-+                    .setMessage(message)
-+                    .setPositiveButton(missing ? "Install" : "Fix", (d, w) -> openFix(activity, missing))
-+                    .setNegativeButton("Later", null)
-+                    .setNeutralButton("Don't ask again", (d, w) ->
-+                            prefs().edit().putBoolean(PREF_DONT_ASK, true).apply())
-+                    .show();
++            M3Dialog.show(activity, missing ? "Install microG" : "microG is restricted", message,
++                    missing ? "Install" : "Fix", () -> openFix(activity, missing),
++                    "Later",
++                    "Don't ask again", () -> prefs().edit().putBoolean(PREF_DONT_ASK, true).apply());
 +        } catch (Exception e) {
 +            Log.w(TAG, "Could not show microG dialog", e);
 +        }
 +    }
 +
 +    private static void openFix(Activity activity, boolean missing) {
-+        Intent stub = new Intent(STUB_ACTION_SETUP).setPackage(STUB_PACKAGE);
++        Intent stub = new Intent(MicroGContract.ACTION_SETUP).setPackage(MicroGContract.STUB_PACKAGE);
 +        try {
 +            activity.startActivity(stub);
 +            return;
@@ -377,7 +511,7 @@ index 0000000..457972a
 +        }
 +        Intent intent;
 +        if (missing) {
-+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MICROG_DOWNLOAD_URL));
++            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MicroGContract.MICROG_DOWNLOAD_URL));
 +        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 +            intent = new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
 +        } else {
@@ -440,6 +574,60 @@ index 0000000..fe5ac7b
 +    @Override public Uri insert(Uri u, ContentValues v) { return null; }
 +    @Override public int delete(Uri u, String s, String[] a) { return 0; }
 +    @Override public int update(Uri u, ContentValues v, String s, String[] a) { return 0; }
++}
+diff --git a/extensions/microg/src/main/java/app/morphe/extension/microg/contract/MicroGContract.java b/extensions/microg/src/main/java/app/morphe/extension/microg/contract/MicroGContract.java
+new file mode 100644
+index 0000000..6fa53d3
+--- /dev/null
++++ b/extensions/microg/src/main/java/app/morphe/extension/microg/contract/MicroGContract.java
+@@ -0,0 +1,48 @@
++package app.morphe.extension.microg.contract;
++
++/**
++ * Single source of truth shared by the GmsCompat-Stub app and the microG extension injected into
++ * patched apps. Compiled into both; tools/e2e.sh fails if the two copies differ.
++ * Lives under app/morphe/extension/microg/ so the patch never rewrites its strings.
++ */
++public final class MicroGContract {
++    private MicroGContract() {
++    }
++
++    // Stub app and its broker provider.
++    public static final String STUB_PACKAGE = "app.morphe.gmscompat";
++    public static final String BROKER_AUTHORITY = STUB_PACKAGE + ".broker";
++    public static final String BROKER_URI = "content://" + BROKER_AUTHORITY;
++    public static final String ACTION_SETUP = STUB_PACKAGE + ".action.SETUP";
++
++    // ContentResolver.call methods (arg = caller package).
++    public static final String CALL_STATUS = "status";
++    public static final String CALL_REGISTER = "register";
++
++    // Result bundle keys.
++    public static final String KEY_GMS_PACKAGE = "gms_package";
++    public static final String KEY_GMS_INSTALLED = "gms_installed";
++    public static final String KEY_GMS_VERSION = "gms_version";
++    public static final String KEY_GMS_BATTERY_OPTIMIZED = "gms_battery_optimized";
++    public static final String KEY_KEEPALIVE_RUNNING = "keepalive_running";
++    public static final String KEY_PROMPTS_HANDLED = "prompts_handled";
++
++    public static final String MICROG_DOWNLOAD_URL = "https://github.com/MorpheApp/MicroG-RE/releases/latest";
++
++    /** GmsCore implementations, preferred first. Built at run time so no literal is a rewrite target. */
++    public static String[] gmsCandidates() {
++        String gms = ".android.gms";
++        return new String[]{"app.revanced" + gms, "com.mgoogle" + gms, "com" + ".google" + gms};
++    }
++
++    // Signer SHA-256 digests.
++    /** Official MicroG-RE releases (same value Morphe's GmsCoreSupportPatch checks). */
++    public static final String MICROG_RE_SHA256 = "0b6c9515afb195fac59601696ba0a7907a0b217ccf720b43148427ccf64343e7";
++    /** Google original release key (oldest lineage entry of GmsCore, Play Store signer, MicroG fake_signature). */
++    public static final String GOOGLE_ORIGINAL_SHA256 = "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83";
++    /** Rotated GmsCore key (GrapheneOS gmscompat known signer). */
++    public static final String GOOGLE_ROTATED_SHA256 = "5f2391277b1dbd489000467e4c2fa6af802430080457dce2f618992e9dfb5402";
++
++    /** DER of the Google original certificate (SHA-256 {@link #GOOGLE_ORIGINAL_SHA256}). */
++    public static final String GOOGLE_CERT_DER_BASE64 = "MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK";
 +}
 diff --git a/patch-library/build.gradle.kts b/patch-library/build.gradle.kts
 index df3c164..7ea2a37 100644

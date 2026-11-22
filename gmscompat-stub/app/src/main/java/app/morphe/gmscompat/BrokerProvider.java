@@ -1,5 +1,6 @@
 package app.morphe.gmscompat;
 
+import app.morphe.extension.microg.contract.MicroGContract;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -35,26 +36,26 @@ public final class BrokerProvider extends ContentProvider {
     public Bundle call(String method, String arg, Bundle extras) {
         Context ctx = getContext();
         String caller = Build.VERSION.SDK_INT >= 19 ? getCallingPackage() : arg;
-        if ("register".equals(method) && caller != null && caller.equals(arg)) {
+        if (MicroGContract.CALL_REGISTER.equals(method) && caller != null && caller.equals(arg)) {
             Prefs.addClient(ctx, caller);
-        } else if (!"status".equals(method)) {
+        } else if (!MicroGContract.CALL_STATUS.equals(method)) {
             return null;
         }
 
         Detector.GmsCore gms = Detector.preferredMicroG(ctx);
         boolean batteryOptimized = gms != null && Detector.isBatteryOptimized(ctx, gms.packageName);
-        if ("register".equals(method)) {
+        if (MicroGContract.CALL_REGISTER.equals(method)) {
             if (gms != null && Prefs.keepAlive(ctx) && !KeepAliveService.running) KeepAliveService.start(ctx);
             if (gms == null || batteryOptimized) notifySetup(ctx, gms == null);
         }
 
         Bundle b = new Bundle();
-        b.putString("gms_package", gms != null ? gms.packageName : null);
-        b.putBoolean("gms_installed", gms != null);
-        b.putLong("gms_version", gms != null ? gms.versionCode : 0);
-        b.putBoolean("gms_battery_optimized", batteryOptimized);
-        b.putBoolean("keepalive_running", KeepAliveService.running);
-        b.putBoolean("prompts_handled", notificationsEnabled(ctx));
+        b.putString(MicroGContract.KEY_GMS_PACKAGE, gms != null ? gms.packageName : null);
+        b.putBoolean(MicroGContract.KEY_GMS_INSTALLED, gms != null);
+        b.putLong(MicroGContract.KEY_GMS_VERSION, gms != null ? gms.versionCode : 0);
+        b.putBoolean(MicroGContract.KEY_GMS_BATTERY_OPTIMIZED, batteryOptimized);
+        b.putBoolean(MicroGContract.KEY_KEEPALIVE_RUNNING, KeepAliveService.running);
+        b.putBoolean(MicroGContract.KEY_PROMPTS_HANDLED, notificationsEnabled(ctx));
         return b;
     }
 
@@ -69,16 +70,15 @@ public final class BrokerProvider extends ContentProvider {
         if (nm == null) return;
         Notification.Builder b;
         if (Build.VERSION.SDK_INT >= 26) {
-            nm.createNotificationChannel(new NotificationChannel(CHANNEL, "microG setup",
+            nm.createNotificationChannel(new NotificationChannel(CHANNEL, ctx.getString(R.string.channel_setup),
                     NotificationManager.IMPORTANCE_DEFAULT));
             b = new Notification.Builder(ctx, CHANNEL);
         } else {
             b = new Notification.Builder(ctx);
         }
-        b.setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setContentTitle(missing ? "microG is not installed" : "microG is battery optimized")
-                .setContentText(missing ? "Patched apps need microG for sign-in, push and maps."
-                        : "Push notifications of patched apps may be delayed.")
+        b.setSmallIcon(R.drawable.ic_stat_microg)
+                .setContentTitle(ctx.getString(missing ? R.string.notif_missing_title : R.string.notif_battery_title))
+                .setContentText(ctx.getString(missing ? R.string.notif_missing_text : R.string.notif_battery_text))
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getActivity(ctx, 0,
                         new Intent(ctx, MainActivity.class), PendingIntent.FLAG_IMMUTABLE));

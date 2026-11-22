@@ -1,5 +1,6 @@
 package app.morphe.gmscompat;
 
+import app.morphe.extension.microg.contract.MicroGContract;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,17 +14,10 @@ import java.util.List;
 
 /** Finds the installed GmsCore implementation (the stub's view of "which microG is here"). */
 final class Detector {
-    /** Official MicroG-RE release signer (same value Morphe's GmsCoreSupportPatch checks). */
-    static final String MICROG_RE_SHA256 = "0b6c9515afb195fac59601696ba0a7907a0b217ccf720b43148427ccf64343e7";
-    /** Google signers: original (oldest lineage entry) and rotated GmsCore key (GrapheneOS known signer). */
-    static final String GOOGLE_ORIGINAL_SHA256 = "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83";
-    static final String GOOGLE_ROTATED_SHA256 = "5f2391277b1dbd489000467e4c2fa6af802430080457dce2f618992e9dfb5402";
-
-    static final String[] CANDIDATES = {
-            "app.revanced.android.gms", // MicroG-RE / ReVanced GmsCore
-            "com.mgoogle.android.gms",  // Vanced microG
-            "com.google.android.gms",   // microG with signature spoofing, or real GMS
-    };
+    static final String MICROG_RE_SHA256 = MicroGContract.MICROG_RE_SHA256;
+    static final String GOOGLE_ORIGINAL_SHA256 = MicroGContract.GOOGLE_ORIGINAL_SHA256;
+    static final String GOOGLE_ROTATED_SHA256 = MicroGContract.GOOGLE_ROTATED_SHA256;
+    static final String[] CANDIDATES = MicroGContract.gmsCandidates();
 
     static final class GmsCore {
         final String packageName;
@@ -54,8 +48,11 @@ final class Detector {
 
         String label() {
             if (isRealGoogle()) return "Google Play services";
-            if (isOfficialMicroGRe()) return "MicroG-RE (official)";
-            return "microG (" + packageName + ")";
+            switch (packageName) {
+                case "app.revanced.android.gms": return "MicroG-RE";
+                case "com.mgoogle.android.gms": return "Vanced microG";
+                default: return "microG";
+            }
         }
     }
 

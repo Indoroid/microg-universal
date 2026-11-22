@@ -10,13 +10,14 @@ Design, analysis of Morphe / MicroG-RE / GrapheneOS GmsCompat, and limits: [`doc
 
 | Path | What |
 |---|---|
-| `morphe-patches-library.patch` | Library change: `all/misc/microg/*` (factory patch, fingerprints, generated constants) + `extensions/microg` (runtime dex) + build wiring |
-| `morphe-patches.patch` | Bundle change: named patch **MicroG support (universal)** with options |
-| `gmscompat-stub/` | Sideloadable stub app `app.morphe.gmscompat` (broker provider, keep-alive FGS, setup UI) |
-| `tools/gen_constants.py` | Regenerates `MicroGConstants.kt` from MicroG-RE manifests, cross-checked against a real GmsCore APK |
-| `tools/repack_and_verify.sh` | Repacks patcher output into a signed APK and statically verifies every rewrite |
-| `harness/` | Minimal JVM driver that runs the patch through `morphe-patcher` |
-| `testapp/` | R8-minified client (play-services-base 18.11.1 + firebase-messaging 26.0.2) used as patch target |
+| `morphe/` | Morphe integration: `morphe-patches-library.patch` (universal patch, fingerprints, generated constants, runtime extension with M3 dialog), `morphe-patches.patch` (named patch + options), `apply.sh` applies both |
+| `shared/` | `MicroGContract.java`: the one contract compiled into both the stub and the injected extension (provider, calls, keys, signers, Google cert) |
+| `gmscompat-stub/` | Sideloadable stub `app.morphe.gmscompat`: Material 3 / Material You UI, broker provider, keep-alive FGS |
+| `tools/e2e.sh` | Single entry point: `check`, `build`, `patch`, `vm`, `device`, `ui`, `all` |
+| `tools/gen_constants.py` | Regenerates `MicroGConstants.kt` from MicroG-RE manifests, cross-checked with a real GmsCore APK |
+| `harness/` | JVM driver running the patch through `morphe-patcher` (optional test clone mode) |
+| `testapp/` | R8-minified GMS client used as a patch target |
+| `out/ui/` | Screenshots of the stub and the injected dialog (light/dark) from the VM |
 
 ## Use
 
@@ -40,14 +41,16 @@ Design, analysis of Morphe / MicroG-RE / GrapheneOS GmsCompat, and limits: [`doc
    original signer, computed at patch time), `<queries>`, `uses-library required=false` for `com.google.*`, and an
    init `<provider>` that starts the bridge before `Application.onCreate`.
 
-## Build
+## Build and test
 
 ```bash
-# library (needs morphe-patcher 2.5.0 in mavenLocal)
-./gradlew :patch-library:jar
+morphe/apply.sh ../morphe-patches-library ../morphe-patches
 ```
 
 ```bash
-# stub
-cd gmscompat-stub && gradle assembleRelease
+tools/e2e.sh all
 ```
+
+Design: the stub (MDC 1.14, dynamic color, large top app bar, cards, MaterialSwitch, themed icon) and the
+library-free dialog injected into patched apps share one M3 tonal palette (system Material You colors on
+Android 12+, M3 baseline before), so setup looks the same in every patched app and in the stub.

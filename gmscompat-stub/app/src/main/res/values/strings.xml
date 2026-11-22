@@ -1,3 +1,47 @@
 <resources>
     <string name="app_name">GmsCompat Stub</string>
+    <string name="title">microG compatibility</string>
+
+    <string name="status_ready">microG is ready</string>
+    <string name="status_ready_detail">Patched apps use %1$s %2$s</string>
+    <string name="status_missing">microG is not installed</string>
+    <string name="status_missing_detail">Patched apps need MicroG-RE for sign-in, push notifications and maps.</string>
+    <string name="status_attention">microG needs attention</string>
+    <string name="status_attention_detail">Fix the items below so push notifications arrive on time.</string>
+
+    <string name="action_install">Install MicroG-RE</string>
+    <string name="action_microg_settings">microG settings</string>
+    <string name="action_fix">Fix</string>
+    <string name="action_allow">Allow</string>
+
+    <string name="section_health">Health</string>
+    <string name="section_gmscore">GmsCore implementations</string>
+    <string name="section_clients">Patched apps</string>
+
+    <string name="row_battery_microg">microG battery use</string>
+    <string name="row_battery_stub">Stub battery use</string>
+    <string name="row_battery_ok">Not restricted</string>
+    <string name="row_battery_bad">Restricted: push messages may be delayed</string>
+    <string name="row_keepalive">Keep microG alive</string>
+    <string name="row_keepalive_on">Running as a foreground service</string>
+    <string name="row_keepalive_off">Off</string>
+    <string name="row_notifications">Notifications</string>
+    <string name="row_notifications_off">Off: patched apps will show their own setup dialogs</string>
+    <string name="row_notifications_on">Setup notices appear here, not in every app</string>
+
+    <string name="chip_official">Official</string>
+    <string name="chip_unofficial">Unofficial key</string>
+    <string name="chip_google">Google</string>
+    <string name="chip_disabled">Disabled</string>
+    <string name="none_installed">No GmsCore implementation installed</string>
+    <string name="no_clients">No patched app has registered yet. Open a patched app once.</string>
+    <string name="footer">Patched apps work without this app. It keeps microG running and handles setup for all of them, like GrapheneOS\' GmsCompat but without system privileges.</string>
+
+    <string name="channel_keepalive">Keep microG alive</string>
+    <string name="channel_setup">microG setup</string>
+    <string name="notif_keepalive">Keeping %1$s running</string>
+    <string name="notif_missing_title">microG is not installed</string>
+    <string name="notif_missing_text">Patched apps need microG for sign-in, push and maps.</string>
+    <string name="notif_battery_title">microG is battery optimized</string>
+    <string name="notif_battery_text">Push notifications of patched apps may be delayed.</string>
 </resources>
