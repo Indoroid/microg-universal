@@ -82,3 +82,13 @@ manifest c2dm receiver/permission renamed, SPOOFED_* meta-data, init provider, q
 `com.google.android.gms` const-strings, 28 → `app.revanced.android.gms`; 8/8 `getPackageInfo` call sites →
 `MicroGBridge`; 1 availability hook; 0 placeholders; APK signs and verifies.
 Not done here: on-device run (no emulator in this environment).
+
+## 9. Real apps (NikGApps 2026-11-19 builds, arm64)
+| App | Version | Dex | `getPackageInfo` → bridge | availability hooks | stale `com.google.android.gms` | static verdict |
+|---|---|---|---|---|---|---|
+| Gmail `com.google.android.gm` | 2026.02.23 | 11 | 94 | 2 | 0 | PASS |
+| Chrome `com.android.chrome` (+ unpatched TrichromeLibrary) | 763221832 | – | 51 | 1 | 0 | PASS |
+| Maps `com.google.android.apps.maps` | 26.16.12 | – | 84 | 1 | 0 | PASS |
+| Keep `com.google.android.keep` | 5.26.042 | – | 48 | 2 | 0 | PASS |
+Patch time 12–20 s per app. MicroG-RE 7.3.2 built from source (`app.revanced.android.gms`, vc 255070315).
+BHIM / APKPure: not obtainable from this environment (APKPure answers automated clients with a Cloudflare challenge).

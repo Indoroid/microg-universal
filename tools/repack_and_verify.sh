@@ -5,6 +5,7 @@ set -euo pipefail
 ORIG=$1 OUT=$2 VENDOR=$3 DEST=$4
 BT=${ANDROID_HOME:-/opt/android-sdk}/build-tools/35.0.0
 WORK=$(mktemp -d)
+ls "$OUT"/classes*.dex >/dev/null 2>&1 || { echo "RESULT: FAIL (no patched dex in $OUT)"; exit 1; }
 
 python3 - "$ORIG" "$OUT" "$WORK/unsigned.apk" <<'EOF'
 import sys, zipfile, os, glob
@@ -55,8 +56,8 @@ echo "  const-string \"$VENDOR.android.gms\": $(count "const-string.*\"$VENDOR.a
 echo "  getPackageInfo → MicroGBridge: $(count 'invoke-static.*MicroGBridge;.getPackageInfo')"
 echo "  PackageManager.getPackageInfo left outside extension: $(grep 'invoke-virtual.*Landroid/content/pm/PackageManager;.getPackageInfo' "$D" | grep -vc 'MicroGBridge' || true)"
 echo "  availability hooks (forcePlayServicesAvailable): $(count 'MicroGBridge;.forcePlayServicesAvailable')"
-echo "  placeholders left: $(count 'PLACEHOLDER')"
-[ "$(count 'PLACEHOLDER')" = 0 ] || FAIL=1
+echo "  placeholders left: $(count 'MICROG_[A-Z_]*_PLACEHOLDER')"
+[ "$(count 'MICROG_[A-Z_]*_PLACEHOLDER')" = 0 ] || FAIL=1
 [ "$(count 'invoke-static.*MicroGBridge;.getPackageInfo')" != 0 ] || FAIL=1
 rm -rf "$WORK"
 [ $FAIL = 0 ] && echo "RESULT: PASS" || { echo "RESULT: FAIL"; exit 1; }
