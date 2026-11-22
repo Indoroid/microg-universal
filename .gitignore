@@ -2,3 +2,8 @@ build/
 .gradle/
 out/*.apk
 out/deps/test.keystore
+*.apk
+*.idsig
+out/deps/
+out/real/
+out/device/*.logcat.txt
