@@ -13,8 +13,8 @@ export WAIT=${WAIT:-150}
 echo "===== A. baseline: unpatched apps, no GMS, no microG"
 "$T" A-testapp "$R/testapp/app/build/outputs/apk/release/app-release.apk"
 "$T" A-keep "$KEEP"
-"$T" A-gmail "$GMAIL"
-for p in test.gmsclient com.google.android.keep com.google.android.gm; do $ADB uninstall $p >/dev/null 2>&1; done
+SKIP_INSTALL=1 "$T" A-gmail-preinstalled "$GMAIL"
+for p in test.gmsclient com.google.android.keep; do $ADB uninstall $p >/dev/null 2>&1; done
 
 echo "===== B. MicroG-RE + GmsCompat-Stub"
 echo "microg: $($ADB install -r -g "$R/out/deps/microg-re.apk" 2>&1 | tail -1)"
@@ -27,9 +27,9 @@ $ADB exec-out screencap -p > "$R/out/device/B-stub.png"
 echo "===== C. patched apps"
 "$T" C-testapp "$R/out/testapp-microg.apk"
 "$T" C-keep "$R/out/real/keep-microg.apk"
-"$T" C-gmail "$R/out/real/gmail-microg.apk"
-"$T" C-maps "$R/out/real/maps-microg.apk"
-"$T" C-chrome "$R/out/real/chrome-microg.apk" "$TRICHROME"
+"$T" C-gmail "$R/out/real/gmail-microg-clone.apk"
+"$T" C-maps "$R/out/real/maps-microg-clone.apk"
+"$T" C-chrome "$R/out/real/chrome-microg-clone.apk" "$TRICHROME"
 
 echo "===== stub registry / microG view"
 $ADB shell content call --uri content://app.morphe.gmscompat.broker --method status --arg x 2>&1 | tail -1

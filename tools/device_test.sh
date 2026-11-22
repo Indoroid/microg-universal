@@ -9,9 +9,13 @@ WAIT=${WAIT:-90}
 mkdir -p "$OUT"
 PKG=$(/opt/android-sdk/build-tools/35.0.0/aapt2 dump packagename "$APK")
 
-for dep in "$@"; do $ADB install -r "$dep" 2>&1 | tail -1; done
-$ADB uninstall "$PKG" >/dev/null 2>&1
-echo "[$LABEL] install: $($ADB install -r -g "$APK" 2>&1 | tail -1)"
+for dep in "$@"; do echo "[$LABEL] dep $(basename "$dep"): $($ADB install -r "$dep" 2>&1 | tail -1)"; done
+if [ "${SKIP_INSTALL:-0}" = 1 ]; then
+  echo "[$LABEL] using preinstalled $PKG"
+else
+  $ADB uninstall "$PKG" >/dev/null 2>&1
+  echo "[$LABEL] install: $($ADB install -r -g "$APK" 2>&1 | tail -1)"
+fi
 $ADB logcat -c
 ACT=$($ADB shell cmd package resolve-activity --brief -c android.intent.category.LAUNCHER "$PKG" | tail -1 | tr -d '\r')
 echo "[$LABEL] launch $ACT"
