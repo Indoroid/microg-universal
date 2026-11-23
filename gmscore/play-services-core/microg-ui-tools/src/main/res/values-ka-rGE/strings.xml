@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013-2017 microG Project Team
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="lib_name">microG UI ხელსაწყოები</string>
+    <string name="lib_license">Apache License 2.0, microG-ის გუნდი</string>
+    <string name="about_version_str">ვერსია %1$s</string>
+    <string name="about_default_license">ყველა უფლება დაცულია.</string>
+    <string name="prefcat_setup">налаგდება</string>
+    <string name="self_check_title">თვითშემოწმება</string>
+    <string name="self_check_desc">შეამოწმეთ, სწორად არის თუ არა სისტემა მომზადებული microG-ის გამოსაყენებლად.</string>
+    <string name="self_check_cat_permissions">ნებართვები and given</string>
+    <string name="self_check_name_permission">ნებართვა %1$s-ისთვის:</string>
+    <string name="self_check_name_permission_interact_across_profiles">სამუშაო პროფილთან ურთიერთობის ნებართვა:</string>
+    <string name="self_check_resolution_permission">შეხეთ აქ ნებართვას მისანიჭებლად. ნებართვის არგაცემა შესაძლოა გამოიწვიოს აპლიკაციების არასწორი მუშაობა.</string>
+    <string name="about_root_title">microG UI დემო</string>
+    <string name="about_root_summary">შეჯამება</string>
+    <string name="about_root_version">ვერსია v0.1.0</string>
+    <string name="about_root_libraries">ჩართული ბიბლიოთეკები</string>
+    <!--Settings About-->
+    <string name="about_morphe_description">Morphe არის ღია კოდის პროექტი, რომელიც შექმნილია Android აპლიკაციების პატჩების მეშვეობით модиფიცირებისთვის</string>
+</resources>

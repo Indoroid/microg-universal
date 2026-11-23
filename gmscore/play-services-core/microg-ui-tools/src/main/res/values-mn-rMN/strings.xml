@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013-2017 microG Project Team
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="lib_name">microG UI хэрэгслүүд</string>
+    <string name="lib_license">Apache License 2.0, microG баг</string>
+    <string name="about_default_license">Бүх эрх хуулиар хамгаалагдсан.</string>
+    <string name="prefcat_setup">Тохиргоо</string>
+    <string name="self_check_desc">Систем microG ашиглахад зөв тохируулагдсан эсэхийг шалгах.</string>
+    <string name="self_check_cat_permissions">Олгосон зөвшөөрлүүд</string>
+    <string name="self_check_name_permission_interact_across_profiles">Ажлын профайлтай харилцах зөвшөөрөл:</string>
+    <string name="self_check_resolution_permission">Зөвшөөрөл олгохын тулд энд дарна уу. Зөвшөөрөл олгохгүй бол аппликейшнүүд буруу ажиллах магадлалтай.</string>
+    <string name="about_root_summary">Хураангуй</string>
+    <!--Settings About-->
+</resources>

@@ -1,0 +1,218 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+package com.aurora.store.compose.ui.apps
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aurora.gplayapi.api.TopChartType
+import com.aurora.gplayapi.model.App
+import com.aurora.gplayapi.model.ContentType
+import com.aurora.gplayapi.model.StreamCluster
+import com.aurora.store.R
+import com.aurora.store.compose.composable.Placeholder
+import com.aurora.store.compose.composable.ShimmerAppRow
+import com.aurora.store.compose.composable.app.LargeAppListItem
+import com.aurora.store.compose.preview.AppPreviewProvider
+import com.aurora.store.compose.preview.ThemePreviewProvider
+import com.aurora.store.data.model.ViewState
+import com.aurora.store.data.model.ViewState.Loading.getDataAs
+import com.aurora.store.viewmodel.topchart.TopChartViewModel
+
+@Composable
+internal fun TopChartsContent(
+    pageType: Int,
+    viewModel: TopChartViewModel,
+    onAppClick: (App) -> Unit
+) {
+    val charts = listOf(
+        TopChartType.TOP_SELLING_FREE,
+        TopChartType.TOP_GROSSING,
+        TopChartType.MOVERS_SHAKERS,
+        TopChartType.TOP_SELLING_PAID
+    )
+    val chartTitles = listOf(
+        R.string.tab_top_free,
+        R.string.tab_top_grossing,
+        R.string.tab_trending,
+        R.string.tab_top_paid
+    )
+    val chartType = if (pageType == 1) ContentType.GAME else ContentType.APPLICATION
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedChart = charts[selectedIndex]
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val cluster = state.getDataAs<StreamCluster?>()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(selectedIndex) {
+        listState.scrollToItem(0)
+        viewModel.getStreamCluster(chartType, selectedChart)
+    }
+
+    TopChartsBody(
+        selectedIndex = selectedIndex,
+        chartTitles = chartTitles,
+        state = state,
+        cluster = cluster,
+        listState = listState,
+        onTabSelected = { selectedIndex = it },
+        onRetry = { viewModel.getStreamCluster(chartType, selectedChart) },
+        onAppClick = onAppClick
+    )
+}
+
+@Composable
+private fun TopChartsBody(
+    selectedIndex: Int,
+    chartTitles: List<Int>,
+    state: ViewState,
+    cluster: StreamCluster?,
+    listState: LazyListState = rememberLazyListState(),
+    onTabSelected: (Int) -> Unit = {},
+    onRetry: () -> Unit = {},
+    onAppClick: (App) -> Unit = {}
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        SecondaryScrollableTabRow(
+            selectedTabIndex = selectedIndex,
+            edgePadding = dimensionResource(R.dimen.spacing_small)
+        ) {
+            chartTitles.forEachIndexed { index, titleRes ->
+                Tab(
+                    selected = selectedIndex == index,
+                    onClick = { onTabSelected(index) },
+                    text = { Text(stringResource(titleRes)) }
+                )
+            }
+        }
+
+        when {
+            state is ViewState.Error -> Placeholder(
+                modifier = Modifier.weight(1f),
+                painter = painterResource(R.drawable.ic_apps),
+                message = stringResource(R.string.no_apps_available),
+                actionLabel = stringResource(R.string.action_retry),
+                onAction = onRetry
+            )
+
+            cluster != null && cluster.apps.isEmpty() -> Placeholder(
+                modifier = Modifier.weight(1f),
+                painter = painterResource(R.drawable.ic_apps),
+                message = stringResource(R.string.no_apps_available)
+            )
+
+            cluster != null -> {
+                val apps = cluster.apps.distinctBy { it.id }
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        vertical = dimensionResource(R.dimen.spacing_small)
+                    )
+                ) {
+                    items(count = apps.size, key = { apps[it].id }) { index ->
+                        LargeAppListItem(
+                            app = apps[index],
+                            onClick = { onAppClick(apps[index]) }
+                        )
+                    }
+                }
+            }
+
+            else -> LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = dimensionResource(R.dimen.spacing_small))
+            ) {
+                items(8) { ShimmerAppRow() }
+            }
+        }
+    }
+}
+
+private val previewChartTitles = listOf(
+    R.string.tab_top_free,
+    R.string.tab_top_grossing,
+    R.string.tab_trending,
+    R.string.tab_top_paid
+)
+
+@PreviewWrapper(ThemePreviewProvider::class)
+@Preview(showBackground = true)
+@Composable
+private fun TopChartsBodyLoadingPreview() {
+    TopChartsBody(
+        selectedIndex = 0,
+        chartTitles = previewChartTitles,
+        state = ViewState.Loading,
+        cluster = null
+    )
+}
+
+@PreviewWrapper(ThemePreviewProvider::class)
+@Preview(showBackground = true)
+@Composable
+private fun TopChartsBodyLoadedPreview() {
+    val app = AppPreviewProvider().values.first()
+    val apps = List(5) { i -> app.copy(id = i + 1, packageName = "com.preview.app$i") }
+    val cluster = StreamCluster(id = "1", apps = apps)
+    TopChartsBody(
+        selectedIndex = 0,
+        chartTitles = previewChartTitles,
+        state = ViewState.Success(cluster),
+        cluster = cluster
+    )
+}
+
+@PreviewWrapper(ThemePreviewProvider::class)
+@Preview(showBackground = true)
+@Composable
+private fun TopChartsBodyEmptyPreview() {
+    val cluster = StreamCluster(id = "1", apps = emptyList())
+    TopChartsBody(
+        selectedIndex = 1,
+        chartTitles = previewChartTitles,
+        state = ViewState.Success(cluster),
+        cluster = cluster
+    )
+}
+
+@PreviewWrapper(ThemePreviewProvider::class)
+@Preview(showBackground = true)
+@Composable
+private fun TopChartsBodyErrorPreview() {
+    TopChartsBody(
+        selectedIndex = 0,
+        chartTitles = previewChartTitles,
+        state = ViewState.Error("Network error"),
+        cluster = null
+    )
+}

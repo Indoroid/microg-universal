@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013-2017 microG Project Team
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="lib_name">microG UI куралдары</string>
+    <string name="lib_license">Apache License 2.0, microG командасы</string>
+    <string name="about_default_license">Бардык укуктар сакталган.</string>
+    <string name="prefcat_setup">Орнотуу</string>
+    <string name="self_check_desc">Система microG колдонуу үчүн туура орнотулганын текшериңиз.</string>
+    <string name="self_check_cat_permissions">Уруксаттар берилген</string>
+    <string name="self_check_name_permission_interact_across_profiles">Жумуш профили менен өз ара аракеттенүүгө уруксат:</string>
+    <string name="self_check_resolution_permission">Уруксат берүү үчүн бул жерди басыңыз. Уруксат берилбесе, колдонмолор туура эмес иштеши мүмкүн.</string>
+    <string name="about_root_summary">Кыскача маалымат</string>
+    <!--Settings About-->
+</resources>

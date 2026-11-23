@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SPDX-FileCopyrightText: 2017 microG Project Team
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="dialog_title_remove_account">Eliminar conta</string>
+    <string name="dialog_message_remove_account">"Está seguro de que quere eliminar esta conta?
+
+Algúns servizos e funcións non estarán dispoñibles
+
+Os seus datos non se perderán"</string>
+    <string name="dialog_confirm_button">Eliminar</string>
+    <string name="dialog_cancel_button">Cancelar</string>
+    <string name="snackbar_remove_account">Conta %s eliminada</string>
+    <string name="snackbar_undo_button">Anular</string>
+    <string name="gms_settings_name">Axustes de microG</string>
+    <string name="gms_settings_summary">Configura os servizos de MicroG.</string>
+    <string name="just_a_sec">Un segundo...</string>
+    <string name="ask_permission_tos">Ao continuar, permite que esta aplicación e Google utilicen a súa información de acordo cos seus respectivos termos de servizo e políticas de privacidade.</string>
+    <string name="ask_scope_permission_title"><xliff:g example="F-Droid">%1$s</xliff:g> gustaríalle:</string>
+    <string name="ask_service_permission_title"><xliff:g example="F-Droid">%1$s</xliff:g> gustaríalle usar:</string>
+    <string name="account_manager_title">Xestor de contas de Google</string>
+    <string name="sorry">Sentímolo...</string>
+    <string name="auth_before_connect">Conecta a conta Google con microG.\n\nImos conectar unha conta Google, empregue o botón <b>Iniciar sesión</b> ou o botón <b>Huawei</b> se ten un dispositivo deste fabricante. Ao premer un destes botóns será redirixido á páxina de inicio de sesión da súa conta.</string>
+    <string name="auth_sign_in">Iniciar sesión</string>
+    <string name="auth_connecting">"O seu dispositivo está establecendo unha conexión cos servidores de Google para iniciar sesión.
+
+Isto pode tardar uns segundos."</string>
+    <string name="no_network_error_desc">"Non tes conexión de rede.
+
+Pode tratarse dun problema temporal ou é posible que o teu dispositivo Android non estea configurado para servizos de datos. Téntao de novo cando teñas conexión a unha rede móbil ou conéctate a unha rede wifi."</string>
+    <string name="auth_general_error_desc">"Houbo un problema ao comunicarse cos servidores de Google.
+
+Tente de novo máis tarde."</string>
+    <string name="auth_finalize">"O seu dispositivo está contactando con Google para gardar información da súa conta.
+
+Isto pode tardar uns segundos.
+"</string>
+    <string name="allow">Permitir</string>
+    <string name="deny">Denegar</string>
+    <string name="auth_notification_title">Autenticación necesaria</string>
+    <string name="auth_notification_content"><xliff:g example="F-Droid">%1$s</xliff:g> require a túa autorización para acceder á túa conta de Google.</string>
+    <string name="auth_package_override_request_title">Conceder a <b><xliff:g example="F-Droid">%1$s</xliff:g></b> acceso privilexiado a <xliff:g example="account@example.com">%2$s</xliff:g>?</string>
+    <string name="auth_package_override_request_message"><b><xliff:g example="F-Droid">%1$s</xliff:g></b> quere acceder á túa conta coma se fose <b><xliff:g example="F-Droid">%2$s</xliff:g> de <xliff:g example="F-Droid Inc.">%3$s</xliff:g></b>. Isto podería concederlle acceso privilexiado á túa conta.</string>
+    <string name="auth_action_notification_channel_name">Alertas da conta de Google</string>
+    <string name="auth_action_notification_channel_description">Notifica cando unha das túas contas de Google require configuración adicional antes de poder usarse, ou cando unha conta é incompatible con microG.</string>
+    <string name="auth_action_notification_title">Requírese unha acción na conta</string>
+    <string name="auth_action_notification_content">A túa conta de Google precisa configuración adicional.</string>
+    <string name="auth_action_reauth_notification_title">Requírese unha acción na conta</string>
+    <string name="auth_action_activity_header">Finaliza a configuración da túa conta de Google</string>
+    <string name="auth_action_activity_explanation">Completa os seguintes pasos para poder usar a túa conta de Google %s neste dispositivo.</string>
+    <string name="auth_action_step_enable_checkin">Activar o rexistro de dispositivos</string>
+    <string name="auth_action_step_enable_checkin_description">"O teu dispositivo debe rexistrarse en Google polo menos unha vez.
+
+Podes desactivar o rexistro do dispositivo en Google unha vez completada a configuración da conta."</string>
+    <string name="auth_action_step_enable_gcm">Activar Cloud Messaging</string>
+    <string name="auth_action_step_enable_gcm_description">Podes desactivar Cloud Messaging unha vez completada a configuración da conta.</string>
+    <string name="auth_action_step_allow_microg_gcm">Permitir a Cloud Messaging para microG</string>
+    <string name="auth_action_step_allow_microg_gcm_description">Segundo as túas preferencias, microG precisa o teu permiso antes de poder rexistrarse en Cloud Messaging.</string>
+    <string name="auth_action_step_enable_lockscreen">Configurar un bloqueo de pantalla seguro</string>
+    <string name="auth_action_step_enable_lockscreen_description">"A túa conta de Google está xestionada polo teu centro de traballo ou institución educativa. O teu administrador determinou que os dispositivos deben ter un bloqueo de pantalla seguro para poder acceder aos datos da conta.
+
+Configura un contrasinal, un PIN ou un patrón de bloqueo de pantalla."</string>
+    <string name="auth_action_step_perform_content_description">Preme para realizar o paso</string>
+    <string name="auth_action_step_completed_content_description">Paso completado</string>
+    <string name="auth_action_activity_finish">Rematar</string>
+    <string name="signin_picker_title">Escolla unha conta</string>
+    <string name="signin_picker_subtitle">para continuar a <xliff:g example="F-Droid">%1$s</xliff:g></string>
+    <string name="signin_picker_add_account_label">Engadir outra conta</string>
+    <string name="signin_confirm_title">Permitir iniciar sesión en <xliff:g example="F-Droid">%1$s</xliff:g></string>
+    <string name="signin_confirm_button_text">Permitir e compartir</string>
+    <string name="signin_subtext_sharing">Para continuar, microG compartirá o nome, o enderezo de correo electrónico e a foto de perfil da túa conta de Google con <xliff:g example="F-Droid">%1$s</xliff:g>.</string>
+    <string name="perm_status_broadcast_label">escoitar ás emisións de estado internas</string>
+    <string name="perm_gsf_read_gservices_label">ler a configuración do servizo de Google</string>
+    <string name="perm_c2dm_receive_label">escoitar mensaxes C2DM</string>
+    <string name="perm_c2dm_send_label">enviar mensaxes C2DM a outras aplicacións</string>
+    <string name="perm_gtalk_svc_label">intercambiar mensaxes e recibir notificacións de sincronización dos servidores de Google</string>
+    <string name="perm_extended_access_label">Acceso estendido aos servizos de Google</string>
+    <string name="perm_provision_label">proporcionar servizos de microG</string>
+    <string name="perm_provision_description">Permite á aplicación configurar os servizos de microG sen interacción do usuario</string>
+    <string name="perm_car_speed_label">Velocidade do coche</string>
+    <string name="perm_car_speed_description">"Accede á velocidade do teu coche"</string>
+    <string name="perm_car_info_label">Información do vehículo</string>
+    <string name="perm_car_info_description">"Accede á información do teu coche"</string>
+    <string name="perm_car_fuel_label">Nivel de combustible do coche</string>
+    <string name="perm_car_fuel_description">"Accede á información sobre o nivel de combustible do teu coche"</string>
+    <string name="perm_car_mileage_label">Quilometraxe do coche</string>
+    <string name="perm_car_mileage_description">"Quilometraxe do coche"</string>
+    <string name="perm_car_vendor_extension_label">Canle de venda de automóbiles</string>
+    <string name="perm_car_vendor_extension_description">"Accede á canle do provedor do teu vehículo para intercambiar información específica sobre o mesmo."</string>
+    <string name="service_name_checkin">Rexistro do dispositivo</string>
+    <string name="service_name_mcs">Cloud Messaging</string>
+    <string name="service_name_device_attestation">Atestación do dispositivo</string>
+    <string name="service_name_vending">Servizos da Play Store</string>
+    <string name="service_name_work_profile">Perfil de traballo</string>
+    <string name="games_title">Google Play Games</string>
+    <string name="games_info_title"><xliff:g example="F-Droid">%1$s</xliff:g> quere usar Play Games</string>
+    <string name="games_info_content">Para usar Play Games, é necesario instalar a aplicación Google Play Games. A aplicación podería seguir funcionando sen Play Games, pero é posible que se comporte de xeito inesperado.</string>
+    <string name="pick_place_title">Escolle un lugar</string>
+    <string name="place_picker_select_title">Seleccione esta localización</string>
+    <string name="place_picker_nearby_places">Lugares próximos</string>
+    <string name="network_type_mobile">Rede móbil</string>
+    <string name="network_type_wifi">Wi-Fi</string>
+    <string name="network_type_roaming">Itinerancia</string>
+    <string name="network_type_other">Outras redes</string>
+    <!-- Self check -->
+    <string name="self_check_cat_fake_sig">Soporte de falsificación de firma</string>
+    <string name="self_check_cat_gms_packages">Paquetes instalados</string>
+    <string name="self_check_cat_system">Sistema</string>
+    <string name="self_check_name_system_spoofs">O sistema falsifica a sinatura: </string>
+    <string name="self_check_resolution_system_spoofs">Por favor, consulte na documentación que pasos poden ser necesarios.</string>
+    <string name="self_check_pkg_gms">Servizos de microG</string>
+    <string name="self_check_pkg_vending">microG Companion / Play Store</string>
+    <string name="self_check_pkg_gsf">Framework de servizos de microG</string>
+    <string name="self_check_name_app_installed"><xliff:g example="F-Droid">%1$s</xliff:g> Instalado: </string>
+    <string name="self_check_resolution_app_installed">Instala a aplicación <xliff:g example="F-Droid">%1$s</xliff:g> ou unha compatible. Verifique a documentación sobre a que as aplicacións son compatibles.</string>
+    <string name="self_check_name_correct_sig"><xliff:g example="F-Droid">%1$s</xliff:g> ten unha sinatura correcta:</string>
+    <string name="self_check_resolution_correct_sig">Ou o <xliff:g example="F-Droid">%1$s</xliff:g> instalado non é compatible ou a falsificación de sinatura non está activa para iso. Verifique a documentación sobre a que as aplicacións e as ROM son compatibles.</string>
+    <string name="self_check_name_battery_optimizations">As optimizacións de batería son ignoradas:</string>
+    <string name="self_check_resolution_battery_optimizations">Toca aquí para desactivar as optimizacións da batería. Non facelo pode provocar aplicacións mal comportadas.</string>
+    <!-- Settings strings -->
+    <string name="prefcat_about">Acerca de</string>
+    <string name="prefcat_details">Detalles</string>
+    <string name="cond_gcm_bat_title">Optimización da batería activada</string>
+    <string name="cond_gcm_bat_summary">Activaches Cloud Messaging pero ten optimizacións de baterías activas para os servizos de microG. Para que as notificacións push chegen, tes que ignorar as optimizacións da batería.</string>
+    <string name="cond_gcm_bat_action">Ignorar optimizacións</string>
+    <string name="cond_perm_title">Permiso faltante</string>
+    <string name="prefs_account">Preferencias da conta</string>
+    <string name="prefs_account_privacy">Información persoal e privacidade</string>
+    <string name="prefs_account_security">Iniciar sesión e seguridade</string>
+    <string name="pref_auth_trust_google_title">Confía en Google para os permisos da aplicación</string>
+    <string name="pref_auth_trust_google_summary">Cando está desactivado, solicítaselle confirmación ao usuario antes de que a solicitude de autorización dunha aplicación sexa enviada a Google. Algunhas aplicacións non poden usar a conta de Google se isto está desactivado.</string>
+    <string name="pref_auth_visible_title">Permitir ás aplicacións atopar contas</string>
+    <string name="pref_auth_visible_summary">De activarse, tódalas aplicacións deste dispositivo poderán ver o enderezo de correo electrónico das súas contas de Google sen autorización previa.</string>
+    <string name="pref_auth_include_android_id_title">Autenticar co rexistro do dispositivo</string>
+    <string name="pref_auth_include_android_id_summary">Cando está desactivado, as solicitudes de autenticación non estarán vinculadas ao rexistro do dispositivo, o que pode permitir que dispositivos non autorizados inicien sesión, pero pode ter consecuencias imprevistas.</string>
+    <string name="pref_auth_strip_device_name_title">Eliminar nome do dispositivo para autenticación</string>
+    <string name="pref_auth_strip_device_name_summary">Cando está activado, as solicitudes de autenticación non incluirán o nome do dispositivo, o que pode permitir que dispositivos non autorizados inicien sesión, pero tamén pode ter consecuencias imprevistas.</string>
+    <string name="pref_auth_two_step_verification_title">Recibir solicitudes de verificación en dous pasos</string>
+    <string name="pref_auth_two_step_verification_summary">Cando está activado, o dispositivo pode recibir solicitudes de verificación en dous pasos de Google (requírese Cloud Messaging).</string>
+    <string name="pref_auth_allow_find_devices_title">Permitir responder a Google Device Finder</string>
+    <string name="pref_auth_allow_find_devices_summary">Cando está activado, o dispositivo pode responder ás notificacións de Atopar o meu dispositivo de Google (requírese Cloud Messaging).</string>
+    <string name="pref_checkin_enable_summary">Rexistra o seu dispositivo nos servizos de Google e crea un identificador único. microG elimina bits de identificación ademais do teu nome de conta de Google dos datos de rexistro.</string>
+    <string name="pref_device_registration_android_id">ID de Android</string>
+    <string name="checkin_not_registered">Non rexistrado</string>
+    <string name="checkin_last_registration">Último rexistro: <xliff:g example="Yesterday, 02:20 PM">%1$s</xliff:g></string>
+    <string name="checkin_enable_switch">Rexistrar dispositivo</string>
+    <string name="pref_info_status">Estado</string>
+    <string name="pref_accounts_title">Contas</string>
+    <string name="pref_game_accounts_title">Contas de xogos de Google</string>
+    <string name="pref_accounts_summary">Engadir e xestionar contas de Google</string>
+    <string name="prefcat_accounts_settings_title">Axustes</string>
+    <string name="prefcat_accounts_login_accounts_title">Sesión iniciada</string>
+    <string name="prefcat_accounts_options_title">Opcións</string>
+    <string name="pref_accounts_manage_accounts_title">Xestionar contas</string>
+    <string name="pref_accounts_manage_accounts_summary">Abrir o xestor de contas do dispositivo</string>
+    <string name="prefcat_accounts_backup_title">Copia de seguridade da conta</string>
+    <string name="pref_accounts_backup_title">Facer copia de seguridade das contas</string>
+    <string name="pref_accounts_backup_summary">Exportar contas de Google a un ficheiro</string>
+    <string name="pref_accounts_restore_title">Restaurar contas</string>
+    <string name="pref_accounts_restore_summary">Importar contas de Google desde un ficheiro</string>
+    <string name="pref_accounts_backup_warning_title">Facer copia de seguridade das contas?</string>
+    <string name="pref_accounts_backup_warning_message">Isto escribe as túas contas e tokens de inicio de sesión (SID/LSID) nun ficheiro. Calquera que obteña este ficheiro poderá acceder ás túas contas, así que gardao nun lugar seguro e nunca o compartas.</string>
+    <string name="button_backup_accounts">Copia de seguridade</string>
+    <string name="snackbar_accounts_backed_up">Copia de seguridade das contas realizada</string>
+    <string name="snackbar_accounts_export_failed">A copia de seguridade falhou</string>
+    <string name="snackbar_accounts_import_failed">A restauración falhou</string>
+    <string name="prefcat_youtube_activity">Actividade de YouTube</string>
+    <string name="pref_manage_all_history">Xestionar todo o historial</string>
+    <string name="pref_data_in_youtube">Os seus datos en YouTube</string>
+    <string name="pref_accounts_login_accounts_summary">As contas son gardadas e almacenadas só neste dispositivo. Toque nunha para eliminala deste dispositivo permanentemente</string>
+    <string name="pref_privacy_title">Privacidade</string>
+    <string name="pref_privacy_summary">Configuración de privacidade para autenticación e aplicacións</string>
+    <string name="auth_add_account">Engadir conta</string>
+    <string name="prefcat_applications">Aplicacións</string>
+    <string name="prefcat_authentication">Autenticación</string>
+    <string name="pref_add_account_summary">Engadir conta de Google</string>
+    <string name="pref_gcm_enable_mcs_summary">A mensaxería na nube é un provedor de notificacións push empregado por moitas aplicacións de terceiros. Para usalo debe activar o rexistro do dispositivo.</string>
+    <string name="pref_gcm_confirm_new_apps_title">Confirmar novas aplicacións</string>
+    <string name="pref_gcm_confirm_new_apps_summary">Preguntar antes de rexistrar unha nova aplicación para recibir notificacións push</string>
+    <string name="pref_about_title">Acerca de MicroG RE</string>
+    <string name="pref_hide_launcher_icon">Ocultar icona no lanzador</string>
+    <string name="hide_launcher_icon_dialog_message">Se está activado, MicroG estará oculto no lanzador de aplicacións. MicroG pode abrirse desde a información da aplicación que se atopa na lista de aplicacións do sistema do dispositivo.</string>
+    <string name="hide_launcher_icon_updating_title">Agarda mentres se actualiza a aplicación</string>
+    <string name="pref_language_title">Idioma</string>
+    <string name="pref_language_system_default">Predefinido do sistema</string>
+    <string name="pref_github_summary">Repositorio de código fonte</string>
+    <string name="pref_update_title">Comprobar actualizacións</string>
+    <string name="pref_update_summary">Comprobe en GitHub se hai unha versión máis recente.</string>
+    <string name="update_include_prerelease">Incluir compilacións de desenvolvemento</string>
+    <string name="update_available_title">Actualización dispoñible</string>
+    <string name="update_available_prerelease_title">Actualización dispoñible (versión previa)</string>
+    <string name="update_available_message">A nova v%1$s está dispoñible. Ten instalada a versión v%2$s. Desexa descargar e instalar a actualización?</string>
+    <string name="update_now">Actualizar</string>
+    <string name="update_whats_new">Que hai de novo</string>
+    <string name="update_ignore">Ignorar</string>
+    <string name="update_downloading_title">Descargando actualización…</string>
+    <string name="update_download_failed">Erro na descarga. Comprobe a súa conexión e tente de novo.</string>
+    <string name="update_signature_mismatch">A aplicación non pode actualizarse, as sinaturas son diferentes.</string>
+    <string name="update_failed_title">Erro ao actualizar</string>
+    <string name="update_permission_required_title">Permiso necesarió</string>
+    <string name="update_permission_required_message">Para instalar actualizacións, permite que MicroG instale aplicacións descoñecidas nos axustes do sistema.</string>
+    <string name="update_open_settings">Axustes</string>
+    <string name="update_check_failed">Non se puido comprobar se hai actualizacións. Comprobe a súa conexión e tente de novo.</string>
+    <string name="update_up_to_date_title">Está actualizado</string>
+    <string name="update_up_to_date_message">MicroG-RE v%s é a última versión.</string>
+    <string name="update_notification_title">Actualización dispoñible</string>
+    <string name="update_notification_text">Hai unha nova v%s dispoñible, toca para actualizar</string>
+    <string name="update_notification_channel">Actualizacións</string>
+    <string name="update_notification_permission_title">Notificacións</string>
+    <string name="update_notification_permission_message">Para avisarlle cando haxa unha nova actualización dispoñible, MicroG-RE necesita permiso para enviar notificacións. Por favor, permita as notificacións para que as alertas de actualización poidan chegar a vostede.</string>
+    <string name="update_notification_permission_allow">Permitir</string>
+    <string name="update_notification_permission_not_now">Agora non</string>
+    <string name="update_notification_permission_open_settings">Abrir configuracións</string>
+    <string name="gcm_unregister_app">Cancelar rexistro</string>
+    <string name="gcm_no_message_yet">Non se recibiron mensaxes ata agora</string>
+    <string name="gcm_last_message_at">Última mensaxe: <xliff:g example="Yesterday, 02:20 PM">%1$s</xliff:g></string>
+    <string name="gcm_registered">Rexistrado</string>
+    <string name="gcm_registered_since">Rexistrado dende: <xliff:g example="Yesterday, 02:20 PM">%1$s</xliff:g></string>
+    <string name="gcm_unregister_confirm_title">Cancelar rexistro de <xliff:g example="F-Droid">%1$s</xliff:g>?</string>
+    <string name="gcm_unregister_confirm_message">Algunhas aplicacións non se volven rexistrar e/ou non proporcionan unha opción manual para facelo. Estas aplicacións poderían non funcionar correctamente despois de desrexistrarse.\nContinuar?</string>
+    <string name="gcm_unregister_after_deny_message">Negóulle a unha aplicación xa rexistrada o rexistro para notificacións push.\nQuere desrexistrala agora para non recibir mensaxes push no futuro?</string>
+    <string name="gcm_messages_counter">Mensaxes: <xliff:g example="123">%1$d</xliff:g> (<xliff:g example="12345">%2$d</xliff:g> bytes)</string>
+    <string name="gcm_network_state_disconnected">Desconectado</string>
+    <string name="gcm_network_state_connected">Conectado dende <xliff:g example="2 hours ago">%1$s</xliff:g></string>
+    <string name="gcm_enable_switch">Recibir notificacións push</string>
+    <string name="gcm_allow_app_popup">Permitir que <xliff:g example="F-Droid">%1$s</xliff:g> se rexistre para notificacións push?</string>
+    <string name="pref_push_app_allow_register_title">Permitir rexistro</string>
+    <string name="pref_push_app_allow_register_summary">Permitir á aplicación rexistrarse para notificacións push.</string>
+    <string name="pref_push_app_wake_for_delivery_title">Iniciar a aplicación mediante mensaxe push</string>
+    <string name="pref_push_app_wake_for_delivery_summary">Iniciar a aplicación mentres está en segundo plano para recibir as mensaxes push entrantes.</string>
+    <string name="prefcat_push_apps_title">Aplicacións que empregan notificacións push</string>
+    <string name="prefcat_push_apps_registered_title">Aplicacións rexistradas</string>
+    <string name="prefcat_push_apps_unregistered_title">Aplicacións non rexistradas</string>
+    <string name="prefcat_gcm_registers">Rexistros</string>
+    <string name="prefcat_advanced">Avanzado</string>
+    <string name="pref_gcm_remove_registers">Eliminar todas as aplicacións rexistradas</string>
+    <string name="pref_gcm_remove_registers_summary">Empregue esta opción só se tes problemas ao rexistrar unha aplicación ou recibir notificacións</string>
+    <string name="gcm_remove_registers_dialog_title">Cancelar tódolos rexistros?</string>
+    <string name="gcm_remove_registers_dialog_message">"Isto eliminará todas as aplicacións rexistradas de recibir notificacións push de forma simultánea
+
+Necesitará un novo securityToken e AndroidID para rexistrar programas. Comprobe o estado do rexistro do dispositivo
+
+Algunhas aplicacións poderán non ser capaces de rexistrarse de novo tras esta acción. Poderá ser necesario borrar os datos destas aplicacións antes de que poidan solicitar un novo rexistro."</string>
+    <string name="gcm_remove_registers_toast_message">Tódalas aplicacións foron eliminadas das notificacións push</string>
+    <string name="prefcat_push_networks_title">Redes a usar para notificacións push</string>
+    <string name="safetynet_intro">Google SafetyNet é un sistema de certificación de dispositivos que garante que o dispositivo está debidamente asegurado e é compatible con Android CTS. Algunhas aplicacións usan SafetyNet por motivos de seguridade ou como requisito previo para a protección contra manipulacións.\n\nmicroG GmsCore contén unha implementación libre de SafetyNet, pero o servidor oficial require que as solicitudes de SafetyNet estean asinadas mediante o sistema propietario DroidGuard.</string>
+    <string name="safetynet_enable_switch">Permitir a atestación do dispositivo</string>
+    <string name="pref_safetynet_test_title">Probar a atestación de SafetyNet</string>
+    <string name="pref_recaptcha_test_title">Probar ReCAPTCHA</string>
+    <string name="pref_recaptcha_enterprise_test_title">Probar ReCAPTCHA Enterprise</string>
+    <string name="pref_test_summary_passed">Pasaron todos os testes</string>
+    <string name="pref_test_summary_failed">Fallou: %s</string>
+    <string name="pref_test_summary_warn">Aviso: %s</string>
+    <string name="pref_test_summary_running">Executando…</string>
+    <string name="pref_droidguard_unsupported_summary">A execución de DroidGuard non está soportada neste dispositivo. Os servizos de SafetyNet poden funcionar incorrectamente.</string>
+    <string name="prefcat_safetynet_apps_title">Aplicacións que usan SafetyNet</string>
+    <string name="prefcat_device_attestation_apps_title">Aplicacións que usan a atestación do dispositivo</string>
+    <string name="pref_device_attestation_app_allow_requests_title">Permitir solicitudes</string>
+    <string name="pref_device_attestation_app_allow_requests_summary">Permitir que a aplicación solicite a atestación do dispositivo</string>
+    <string name="menu_clear_recent_requests">Borrar solicitudes recentes</string>
+    <string name="safetynet_last_run_at">Último uso: <xliff:g example="Yesterday, 02:20 PM">%1$s</xliff:g></string>
+    <string name="profile_name_native">Nativo</string>
+    <string name="profile_name_real">Real</string>
+    <string name="profile_name_user">Personalizado: %s</string>
+    <string name="profile_name_auto">Automático: %s</string>
+    <string name="profile_name_system">Sistema: %s</string>
+    <string name="pref_device_registration_import_custom_profile_title">Importar perfil personalizado</string>
+    <string name="pref_device_registration_serial_title">Número de serie</string>
+    <string name="pref_device_registration_import_custom_profile_summary">Importar perfil de dispositivo dende arquivo</string>
+    <string name="pref_device_registration_select_profile_title">Seleccionar un perfil</string>
+    <string name="pref_device_registration_device_profile_category">Perfil do dispositivo</string>
+    <string name="pref_safetynet_recent_uses">Usos recentes</string>
+    <string name="pref_safetynet_recent_attestation_summary">Atestación: %s</string>
+    <string name="pref_safetynet_recent_recaptcha_summary">ReCaptcha: %s</string>
+    <string name="pref_safetynet_recent_recaptcha_enterprise_summary">ReCaptcha Enterprise: %s</string>
+    <string name="pref_safetynet_recent_copy_json">Copiar datos JSON JWS</string>
+    <string name="pref_safetynet_recent_advice">Consello</string>
+    <string name="pref_safetynet_recent_eval_type">Tipo de avaliación</string>
+    <string name="pref_safetynet_recent_response_status">Estado da resposta</string>
+    <string name="pref_safetynet_recent_cat_response">Datos da resposta</string>
+    <string name="pref_safetynet_recent_cat_request">Solicitar datos</string>
+    <string name="pref_safetynet_recent_nonce">Nonce (Hex)</string>
+    <string name="pref_safetynet_recent_request_time">Hora da solicitude</string>
+    <string name="pref_safetynet_recent_request_type">Tipo de solicitude</string>
+    <string name="pref_safetynet_recent_cat_basic">Datos básicos</string>
+    <string name="pref_safetynet_recent_token">Token</string>
+    <string name="pref_safetynet_recent_copied">Copiado ao portapapeis!</string>
+    <string name="pref_safetynet_test_integrity_cts_passed">Integridade e CTS superados</string>
+    <string name="pref_safetynet_test_cts_failed">CTS fallou</string>
+    <string name="pref_safetynet_test_integrity_failed">Integridade falida</string>
+    <string name="pref_safetynet_test_not_completed">Aínda non completado</string>
+    <string name="pref_safetynet_test_no_result">Ningún resultado</string>
+    <string name="pref_safetynet_test_invalid_json">JSON non válido</string>
+    <string name="push_notifications_summary_off">OFF</string>
+    <string name="push_notifications_summary_automatic">ON / Automático: %s</string>
+    <string name="push_notifications_summary_manual">ON / Manual: %s</string>
+    <string name="push_notifications_summary_values_seconds">%s segundos</string>
+    <string name="push_notifications_summary_values_minutes">%s minutos</string>
+    <string name="pref_vending_licensing_category">Licencias de Google Play</string>
+    <string name="pref_vending_licensing_enable_switch">Responder ás solicitudes de verificación de licenza</string>
+    <string name="pref_vending_license_enable_summary">Algunhas aplicacións requiren a verificación de que foron compradas en Google Play. Cando unha aplicación o solicite, microG pode descargar un comprobante de compra de Google. Se está desactivado, ou se non hai ningunha conta de Google engadida, as solicitudes de verificación de licenza serán ignoradas.</string>
+    <string name="pref_vending_licensing_purchase_free_apps_switch">Engadir automaticamente aplicacións gratuítas á biblioteca</string>
+    <string name="pref_vending_licensing_purchase_free_apps_summary">É posible que as aplicacións gratuítas comproben se foron descargadas desde Google Play. Engade automaticamente as aplicacións gratuítas á biblioteca da túa conta para pasar sempre a comprobación de todas as aplicacións gratuítas que teñas dispoñibles actualmente.</string>
+    <string name="pref_vending_feature_delivery">Entrega de funcións de Google Play</string>
+    <string name="pref_vending_split_install_switch">Instalación de compoñentes baixo demanda</string>
+    <string name="pref_vending_licensing_split_install_summary">Permitir que as aplicacións descarguen e instalen compoñentes adicionais</string>
+    <string name="feedback_disabled">No momento non é posible enviar comentarios</string>
+    <string name="backup_disabled">No momento non é posible facer unha copia de seguridade</string>
+    <string name="pref_vending_billing_category">Facturación de Google Play</string>
+    <string name="pref_vending_billing_enable_switch">Xestión de solicitudes de facturación</string>
+    <string name="pref_vending_billing_enable_summary">Unha vez activado, algunhas aplicacións poden completar compras ou iniciar subscricións a través do servizo de Facturación de Play de Google.</string>
+    <string name="pref_vending_billing_note_experimental">Esta función é experimental e pode provocar a perda de diñeiro. Fostes advertidos.</string>
+    <string name="pref_vending_billing_note_licensing">Algunhas aplicacións podenRequire que activemos tamén a verificación de licenzas para verificar as súas compras.</string>
+    <string name="pref_vending_asset_delivery_category">Google Play Asset Delivery</string>
+    <string name="pref_vending_asset_delivery_switch">Activar a entrega de activos baixo demanda</string>
+    <string name="pref_vending_asset_delivery_summary">Descargar activos adicionais cando as aplicacións que usan Play Asset Delivery o soliciten</string>
+    <string name="pref_vending_asset_device_sync_summary">As aplicacións que usan Play Asset Delivery descargarán activos adicionais com base na información do dispositivo que se use no momento.</string>
+    <string name="pref_vending_asset_device_sync_switch">Activar a sincronización da información do dispositivo</string>
+    <string name="pref_workprofile_create_account">Permitir a configuración da conta de traballo</string>
+    <string name="pref_workprofile_intro">Ao configurar un perfil de traballo para o seu centro de traballo ou institución educativa,
+a configuración pode intentar conectarse a Google para permitir a descarga de aplicacións nese perfil.</string>
+    <string name="pref_workprofile_disclaimer">É responsabilidade súa asegurarse de que o seu uso de microG estea en concordancia coas políticas corporativas.
+        microG ofrécese segundo a mellor effort posible e non pode garantir que se comporte exactamente como se espera.</string>
+    <string name="pref_auto_create_player">Permitir o rexistro de contas de Play Games</string>
+    <string name="pref_auto_create_player_intro">Ao xogar a xogos, necesita usar unha conta de Play Games para iniciar sesión e rexistrar funcións relacionadas co xogo, como logros, tábolas de clasificación, arquivos, etc. Despois de desactivalo, as contas de Google que non estean vinculadas a unha conta de Play Games non se rexistrarán automaticamente, e o xogo non poderá iniciar sesión nin xogarse.</string>
+    <string name="pref_allow_upload_game_played">Permitir a carga do xogo xogado</string>
+    <string name="pref_allow_upload_game_played_summary">Cando está desactivado, o xogo non informará do estado do xogo xogado despois de iniciar sesión no xogo, e algúns xogos poderían non poder iniciar sesión.</string>
+    <string name="pref_change_default_game_player">Cambiar a conta para xogos</string>
+    <string name="pref_change_default_game_player_summary">Cambiar a conta predefinida para xogos &amp; Cambiar a conta por xogo.</string>
+    <string name="pref_delete_game_account_data">Eliminar os datos de Play Games</string>
+    <string name="pref_delete_game_account_data_summary">Eliminar a conta de Play Games &amp; todos os datos &amp; eliminar os datos de xogos individuais.</string>
+    <string name="credentials_assisted_cancel">Cancelar</string>
+    <string name="credentials_assisted_continue">Continuar</string>
+    <string name="credentials_assisted_confirmation_header">Iniciando sesión</string>
+    <string name="credentials_assisted_continue_as_user_button_label">Continuar como %1$s</string>
+    <string name="credentials_assisted_sign_back_title">Vuelve a iniciar sesión en %1$s con Google</string>
+    <string name="credentials_assisted_signin_consent_header">Iniciando sesión como %1$s</string>
+    <string name="credentials_assisted_signin_consent">Ao continuar, Google compartirá o seu nome, enderezo de correo electrónico e foto de perfil con %1$s. Consulte a Política de privacidade e os Termos de servizo de %1$s.</string>
+    <string name="credentials_assisted_signin_description">Pode xestionar o Acceso con Google nas súas Contas de Google.</string>
+    <string name="credentials_assisted_choose_account_label">Escolla conta</string>
+    <string name="credentials_assisted_choose_account_subtitle">para continuar a %1$s</string>
+    <string name="credentials_assisted_choose_account_error_tips">Anomalía na conta</string>
+    <string name="credentials_assisted_signin_button_text_long">Acceder con Google</string>
+    <string name="credentials_assisted_signin_add_account">Engadir conta</string>
+    <string name="credentials_service_sign_in_with_google_label">Acceder con Google</string>
+    <string name="credentials_service_remote_custom_subtitle">Clave de seguridade, smartphone ou tablet</string>
+    <string name="limited_services_dialog_information">Estás usando os Servizos Limitados de microG. Ao contrario dos Servizos microG habituais, esta versión só funciona con aplicacións que usan as bibliotecas de microG, non con as de Google Play. Isto significa que a maioría das aplicacións ignorarán estes servizos.</string>
+    <string name="limited_services_dialog_information_ack">Compreendo</string>
+    <string name="games_achievement_list_title">Logros</string>
+    <string name="games_achievements_empty_text">Non hai logros para este xogo</string>
+    <string name="games_api_access_denied">Ningunha conta neste dispositivo pode acceder ás APIs de Games</string>
+    <string name="games_achievement_locked_content_description">bloqueado</string>
+    <string name="games_achievement_unlocked_content_description">desbloqueado</string>
+    <string name="games_achievement_extra_text">%1$s XP</string>
+    <string name="games_leaderboard_empty_text">Non hai táboas de clasificación para este xogo</string>
+    <string name="games_leaderboard_list_title">Clasificacións</string>
+    <string name="games_leaderboards_score_label">Puntuación: %1$s</string>
+    <string name="games_snapshot_empty_text">Aínda non se gardou ningunha partida</string>
+    <string name="games_snapshot_choose_btn_text">seleccionar</string>
+    <string name="games_snapshot_delete_btn_text">eliminar</string>
+    <string name="games_delete_snapshot_dialog_title">Eliminar partida gardada</string>
+    <string name="games_delete_snapshot_dialog_message">Está seguro de querer eliminar esta partida gardada?</string>
+    <string name="games_delete_snapshot_dialog_cancel">Cancelar</string>
+    <string name="games_delete_snapshot_dialog_ok">OK</string>
+    <string name="games_delete_snapshot_error">Falhou a eliminación, tente novamente máis tarde</string>
+    <string name="games_state_description_signed_out">Sesión cerrada</string>
+    <string name="games_state_description_delete">Eliminar</string>
+    <string name="games_change_button_text">Cambiar</string>
+    <string name="games_change_default_account_section_title">Cambiar a conta predefinida para os xogos</string>
+    <string name="games_change_default_account_description">Conta predefinida: %1$s</string>
+    <string name="games_change_default_account_explanation">Esta conta úsase para iniciarlle sesión automaticamente nos xogos, gardar o seu progreso e gardar a súa configuración. Cambiar a conta predefinida ou cerrar sesión pode restablecer o seu progreso e a configuración dos xogos que xogou.</string>
+    <string name="games_change_per_game_title">Cambiar a conta por xogo</string>
+    <string name="games_change_per_game_description">Cambiar a conta dun xogo seleccionado ou cerrar sesión nel pode restablecer o seu progreso e a configuración do xogo.</string>
+    <string name="games_change_default_account_for_all_games_dialog_title">Seleccione unha opción para a nova conta predefinida</string>
+    <string name="games_change_default_account_for_all_games_dialog_description">Conta predefinida actual: %1$s</string>
+    <string name="games_change_default_account_for_all_games_dialog_option_only_for_new_games_title">Cambiar a conta predefinida só para xogos novos </string>
+    <string name="games_change_default_account_for_all_games_dialog_option_only_for_new_games_description">Non perderá o acceso ao progreso e aos axustes dos xogos que xogou. Pero o seu progreso dividirase entre contas.</string>
+    <string name="games_change_default_account_for_all_games_dialog_option_for_all_games_title"> Cambiar a conta predefinida para todos os xogos </string>
+    <string name="games_change_default_account_for_all_games_dialog_option_for_all_games_description">Chegará a perder o acceso ao progreso e aos axustes dos xogos que xogou. Reiniciaremos o xogo para aplicar os cambios.</string>
+    <string name="games_change_default_account_for_all_games_dialog_option_sign_out_of_all_games_title"> Cerrar sesión en todos os xogos </string>
+    <string name="games_change_default_account_for_all_games_dialog_option_sign_out_of_all_games_description">É posible que perdaas o acceso ao progreso e ás configuracións dos xogos que xogaches. Reiniciaremos o xogo para aplicar os cambios.</string>
+    <string name="games_change_per_game_dialog_title">Selecciona unha opción para este xogo</string>
+    <string name="games_change_per_game_dialog_description">Cambiar a conta ou saír pode restablecer o teu progreso e as configuracións do xogo</string>
+    <string name="games_change_per_game_dialog_option_use_player">Usar %1$s</string>
+    <string name="games_change_per_game_dialog_option_use_player_snackbar_success_message">Iniciarás sesión neste xogo con %1$s</string>
+    <string name="games_change_per_game_dialog_option_sign_out">Cerrar sesión</string>
+    <string name="games_change_per_game_dialog_option_sign_out_snackbar_success_message">Agora cerraste a sesión neste xogo</string>
+    <string name="games_change_sign_out_of_all_games_snackbar_success_message">Agora cerraste a sesión en todos os xogos</string>
+    <string name="games_change_default_account_for_all_games_snackbar_success_message">Iniciarás sesión en todos os xogos con %1$s</string>
+    <string name="games_change_default_account_for_new_games_snackbar_success_message">Iniciarás sesión nos xogos novos con %1$s</string>
+    <string name="games_account_display_content">Conta actual: %1$s</string>
+    <string name="games_delete_profile_header">Eliminar a conta de Play Games &amp; todos os datos</string>
+    <string name="games_delete_profile_explanation">Elimina permanentemente a túa conta de Google Play Games, a XP e todos os datos do perfil. Esta acción tamén poderá eliminar as túas puntuacións, o progreso (partidas gardadas) e a configuración nos xogos nos que xogaste.</string>
+    <string name="games_delete_profile_button">Eliminar permanentemente</string>
+    <string name="games_delete_game_data_header">Eliminar datos de xogos individuais</string>
+    <string name="games_delete_game_data_explanation">Podes eliminar permanentemente datos individuais de xogos nos que xogaste usando Google Play Games. Esta acción elimina as túas puntuacións, o progreso (partidas gardadas) e a configuración do xogo que selecciones.</string>
+    <string name="games_delete_profile_dialog_title">Está seguro de querer eliminar esta conta?</string>
+    <string name="games_delete_profile_explanation_with_gamer_name">Elimina permanentemente a túa conta de Google Play Games para o nome de xogador &lt;b&gt;%1$s&lt;/b&gt; (&lt;b&gt;%2$s&lt;/b&gt;), a XP e todos os datos do perfil. Esta acción tamén poderá eliminar as túas puntuacións, o progreso (partidas gardadas) e a configuración nos xogos nos que xogaste.</string>
+    <string name="games_delete_profile_dialog_message">Esta acción non se pode desfacer.</string>
+    <string name="games_delete_profile_fail">Non foi posible eliminar o teu perfil. Téntao máis tarde.</string>
+    <string name="games_delete_game_data_confirm_dialog_title">Eliminar os datos de %1$s</string>
+    <string name="games_delete_game_data_confirm_dialog_message">Ao eliminar permanentemente os teus datos de %1$s, elimínaranse as túas puntuacións, o progreso (partidas gardadas) e a configuración do xogo en Google Play Games.</string>
+    <string name="games_popup_signin_welcome">Ola, %1$s</string>
+    <string name="family_management_title">Familia</string>
+    <string name="family_management_retry">Tentar de novo</string>
+    <string name="family_management_load_error">Erro ao cargar o contido</string>
+    <string name="family_management_toolbar_back">Atrás</string>
+    <string name="family_management_toolbar_more">Máis</string>
+    <string name="family_management_exit_family_group">Saír do grupo familiar</string>
+    <string name="family_management_delete_family_group">Eliminar un grupo familiar</string>
+    <string name="family_management_leave_family_password_title">Confirma a contrasinal para saír do grupo familiar</string>
+    <string name="family_management_delete_family_password_title">Confirma a contrasinal para eliminar un grupo familiar</string>
+    <string name="family_management_remove_member_password_title">Confirma a contrasinal para eliminar a \"%s\"</string>
+    <string name="family_management_invite_family_member">Invitar membros da familia</string>
+    <string name="family_management_invite_slots_left">%1$d invitacións restantes</string>
+    <string name="family_management_cancel_invite">Anular invitación</string>
+    <string name="family_management_cancel_invite_success">Invitación anulada correctamente</string>
+    <string name="family_management_cancel_invite_error">Erro ao anular a invitación. Téntao de novo.</string>
+    <string name="family_management_remove_member">Eliminar membro</string>
+    <string name="family_management_member_removed_success">%s foi eliminado do teu grupo familiar</string>
+    <string name="family_management_member_remove_failed">Erro ao eliminar a %s. Téntao de novo.</string>
+    <string name="family_management_leave_family_error_message">Erro ao deixar o grupo familiar. Téntao de novo.</string>
+    <string name="family_management_exist_group_success">Saíste do teu grupo familiar…</string>
+    <string name="family_management_delete_group_success">Grupo familiar eliminado</string>
+    <string name="family_management_delete_group_failure">Erro ao eliminar o grupo do fogar</string>
+    <string name="family_management_delete_group_cancel">Cancelar</string>
+    <string name="family_management_delete_group_confirm">OK</string>
+    <string name="family_management_input_pwd">Por favor, introduce a túa contrasinal</string>
+    <string name="family_management_invite_sent_date_format">Invitación enviada o %s</string>
+    <string name="family_management_invite_send">Invitación enviada</string>
+    <string name="family_management_pwd_error">Contrasinal incorrecta, por favor reinténtao</string>
+    <string name="barcode_scanner_brand">Escaneado por microG en nome de %1$s</string>
+    <string name="camera_permission_dialog_button">OK</string>
+    <string name="camera_permission_dialog_message">Os servizos de microG necesitan acceder á cámara do teu dispositivo para escanear un código para %1$s.\n\nPara activalo, concede o permiso da cámara aos servizos de microG nos Ajustes.</string>
+    <string name="camera_permission_dialog_title">Permiso de cámara requirido</string>
+    <string name="pref_app_install_settings_title">Ajustes do instalador de aplicacións</string>
+    <string name="pref_app_install_switch_title">Permitir a instalación de aplicacións</string>
+    <string name="pref_app_install_other_apps_note">A autorización permite a instalación de aplicacións proporcionadas por outras fontes.</string>
+    <string name="pref_app_install_permission_instruction">Para garantir que as aplicacións instaladas funcionen correctamente, autorice a microG Companion para instalar aplicacións descargadas de outras fontes.</string>
+    <string name="prefcat_app_install_list_title">Aplicacións que usan o Instalador de aplicacións</string>
+    <string name="service_name_google_location_sharing">Compartición de localización de Google</string>
+    <string name="location_sharing_description">Xerencie a compartición da súa localización en tempo real nas aplicacións e servizos de Google desde este dispositivo</string>
+    <string name="location_sharing_learn_more">Saiba máis sobre a &quot;Compartición de localización&quot;</string>
+    <string name="location_sharing_switch_text">Usar a Compartición de localización</string>
+    <string name="location_sharing_turn_off_notify_hint">Se desactiva a Compartición de localización para este dispositivo, as persoas coas que comparte non serán notificadas.</string>
+    <string name="location_sharing_off_previous_hint">Só estará dispoñible a súa última localización compartida ata que a active de novo.</string>
+    <string name="location_sharing_disabled">Non hai comparticións de localización activas para esta conta</string>
+    <string name="location_sharing_turn_on_hint">Unha vez que comece a compartir a súa localización dende unha aplicación ou servizo de Google, poderá xestir a Compartición de localización dende aquí.\n\nPara comezar a compartir a súa localización, vaia a Google Maps ou a Family Link.</string>
+    <string name="location_sharing_turn_off_title">Desactivar a Compartición de localización</string>
+    <string name="location_sharing_turn_off_hint">É posible que aínda estea compartindo a súa localización dende outros dispositivos sesión iniciada na mesma conta de Google ou dende aplicacións que non son de Google. Asegúrese de comprobar a configuración de compartición de localización en calquera lugar onde poida aplicar.\n\nAs persoas coas que comparte seguirá vendo a súa última localización compartida.</string>
+    <string name="location_sharing_turn_off_cancel">Manter activado</string>
+    <string name="location_sharing_turn_off_confirm">Desactivar</string>
+    <string name="location_sharing_confirm_dialog_title">Activar a Compartición de localización</string>
+    <string name="location_sharing_confirm_dialog_text">As persoas coas que comparte a súa localización poden ver sempre:\n·O seu nome e a súa foto\n·A localización Recente do seu dispositivo, mesmo cando non estea usando un servizo de Google\n·A carga da batería do seu dispositivo e se se está a cargar\n·A hora de chegada e de saída, se engaden unha notificación de Compartición de localización</string>
+    <!-- Passkey management -->
+    <string name="pref_passkey_manager_title">Xestorar as chaves de acceso</string>
+    <string name="pref_passkey_manager_empty_title">Non hai passkeys gardadas</string>
+    <string name="pref_passkey_manager_description">Cando as aplicacións de terce rexistran passkeys, microG garda un rexistro local. Se unha aplicación elimina unha passkey sen notificación a microG, o rexistro pode quedar abandonado. Pode eliminar esas entradas residuais aquí.</string>
+    <string name="pref_passkey_manager_delete_dialog_title">Eliminar clave de acceso</string>
+    <string name="pref_passkey_manager_delete_dialog_message">Elimina a clave de acceso para \"%2$s\" en \"%1$s\". Esta acción non se pode desfacer; terás que rexistrar unha nova clave de acceso para volver iniciar sesión.</string>
+    <string name="pref_passkey_manager_delete_dialog_confirm">Eliminar</string>
+    <string name="pref_passkey_manager_unknown_user">Usuario descoñecido</string>
+    <string name="pref_passkey_manager_transport_screen_lock">Bloqueo de pantalla</string>
+    <string name="pref_passkey_manager_transport_usb">USB</string>
+    <string name="pref_passkey_manager_transport_nfc">NFC</string>
+    <string name="pref_passkey_manager_transport_bluetooth">Bluetooth</string>
+    <string name="pref_passkey_manager_transport_hybrid">Híbrido</string>
+    <string name="pref_passkey_manager_credential_id_format_internal">ID: %1$s</string>
+    <string name="self_check_cat_patched_apps">Aplicacións parcheadas</string>
+    <string name="self_check_source_morphe">Parches de Morphe</string>
+    <string name="self_check_source_alternative">parches alternativos</string>
+    <string name="self_check_name_notifications">Notificacións permitidas</string>
+    <string name="self_check_resolution_notifications">Toque aquí para abrir os axustes de notificación. As notificacións son empregadas para manter GcmService en execución en segundo plano cando a optimización de batería é activada ou baixo outras condicións</string>
+    <string name="self_check_name_oem_restriction">Restricións de procesos en segundo plano</string>
+    <string name="self_check_resolution_oem_restriction">O seu sistema podería restrinxir os procesos en segundo plano. Toque aquí para abrir o sitio Don\'t Kill My App! e aprender como desactivar estas restricións</string>
+    <string name="morphe_sign_in_with_google_microg_label">Iniciar sesión con Google a través de MicroG RE</string>
+    <string name="self_check_action_download_morphe">Descargar Morphe</string>
+    <!-- ABI mismatch: arm64 APK on 32-bit userspace -->
+    <string name="abi_mismatch_title">Variante de arquitectura incorrecta instalada</string>
+    <string name="abi_mismatch_message">"Esta compilación de MicroG-RE só contén bibliotecas de 64 bits (arm64), pero este dispositivo está executando un espazo de usuario de 32 bits.
+
+As funcións que necesitan Conscrypt (inicio de sesión na conta, streaming, BotGuard, spoof de fluxos de vídeo, SponsorBlock, Return YouTube Dislike, etc.) non funcionarán correctamente e poden causar problemas de reprodución ou \"Unable to find a default SSL provider\".
+
+Instale en seu lugar o APK ARMv7 ou o Universal."</string>
+    <string name="abi_mismatch_download_armv7">Descargar APK ARMv7</string>
+    <string name="abi_mismatch_downloading_title">Descargando a variante correcta…</string>
+</resources>
