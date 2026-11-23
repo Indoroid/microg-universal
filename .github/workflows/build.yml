@@ -72,13 +72,14 @@ jobs:
           tools/e2e.sh patch testapp/app/build/outputs/apk/release/app-release.apk clone testapp
           mv out/real/testapp-microg.apk out/testapp-microg.apk
           tools/ci/sign.sh stub/app/build/outputs/apk/release/app-release*.apk out/gmscompat-stub-ci.apk
+          cp patches/patch-library/build/libs/morphe-patches-library-*.jar out/
       - uses: actions/upload-artifact@v4
         with:
           name: patches
           path: |
             out/testapp-microg.apk
             out/gmscompat-stub-ci.apk
-            patches/patch-library/build/libs/morphe-patches-library-*.jar
+            out/morphe-patches-library-*.jar
 
   store:
     runs-on: ubuntu-latest
@@ -102,3 +103,30 @@ jobs:
           tools/ci/sign.sh "$(ls store/app/build/outputs/apk/vanilla/release/*.apk | head -1)" out/store-ci.apk
       - uses: actions/upload-artifact@v4
         with: { name: store, path: out/store-ci.apk }
+
+  emulator:
+    needs: [microg, patches]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: art
+          merge-multiple: true
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
+          script: tools/ci/emulator_smoke.sh art/microg-ci.apk art/gmscompat-stub-ci.apk art/testapp-microg.apk out/emulator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: emulator, path: out/emulator }

@@ -80,7 +80,7 @@ CI (`.github/workflows/`) runs the same steps on every push and pull request:
 | Workflow | Jobs |
 |---|---|
 | `build.yml` | microG (`assembleDefaultRelease` + unit tests), patch library + harness + stub, store (`assembleVanillaRelease` + unit tests); APKs uploaded as artifacts |
-| `emulator.yml` | KVM emulator (API 30): installs microG, the stub and a patched test app, checks that every new service resolves and that nothing crashes; logcat uploaded |
+| `build.yml` → `emulator` | KVM emulator (API 30): installs microG, the stub and a patched test app, checks that every new service resolves and that nothing crashes; logcat uploaded |
 
 Design: the stub (MDC 1.14, dynamic color, large top app bar, cards, MaterialSwitch, themed icon) and the
 library-free dialog injected into patched apps share one M3 tonal palette (system Material You colors on
