@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 # Emulator smoke test: microG fork + stub + patched test app.
-#   emulator_smoke.sh <microg.apk> <stub.apk> <patched-testapp.apk> <out dir>
+#   emulator_smoke.sh <microg.apk> <vending.apk> <stub.apk> <patched-testapp.apk> <out dir>
 # Fails if a service the fork declares does not resolve, or if microG or the test app crashes.
 set -uo pipefail
-MICROG=$1 STUB=$2 TESTAPP=$3 OUT=$4
-PKG=app.revanced.android.gms
+MICROG=$1 VENDING=$2 STUB=$3 TESTAPP=$4 OUT=$5
+BASE=app.revanced
+PKG=$BASE.android.gms
 mkdir -p "$OUT"
 fail=0
 adb wait-for-device
 adb shell settings put global package_verifier_enable 0 || true
 adb install -r -g "$MICROG" || exit 1
+adb install -r -g "$VENDING" || exit 1
 adb install -r -g "$STUB" || exit 1
 adb install -r -g "$TESTAPP" || exit 1
 adb logcat -c
 
 for action in \
-  $PKG.android.gms.safetynet.service.START \
-  $PKG.android.gms.safebrowsing.SafeBrowsingService.START \
-  $PKG.android.mobstore.service.START \
-  $PKG.android.gms.time.trustedtime.service.START \
-  $PKG.android.gms.auth.aang.events.services.START \
-  $PKG.android.gms.clearcut.sampler.service.START \
+  $BASE.android.gms.safetynet.service.START \
+  $BASE.android.gms.safebrowsing.SafeBrowsingService.START \
+  $BASE.android.mobstore.service.START \
+  $BASE.android.gms.time.trustedtime.service.START \
+  $BASE.android.gms.auth.aang.events.services.START \
+  $BASE.android.gms.clearcut.sampler.service.START \
   com.google.android.play.engage.BIND_APP_ENGAGE_SERVICE \
   com.google.android.play.core.grouping.BIND_GROUPING_API_SERVICE \
   androidx.enterprise.feedback.action.APP_STATES; do
