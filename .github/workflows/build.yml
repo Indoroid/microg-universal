@@ -62,7 +62,7 @@ jobs:
         run: ./gradlew -I ../tools/no-github-packages.gradle :patch-library:jar --no-daemon
       - name: Harness, stub, test app
         run: |
-          MORPHE_PATCHES_LIBRARY_JAR=$(ls patches/patch-library/build/libs/morphe-patches-library-*[0-9].jar | head -1) gradle -p harness installDist --no-daemon
+          MORPHE_PATCHES_LIBRARY_JAR=$PWD/$(ls patches/patch-library/build/libs/morphe-patches-library-*[0-9].jar | head -1) gradle -p harness installDist --no-daemon
           gradle -p stub assembleRelease --no-daemon
           gradle -p testapp assembleRelease --no-daemon
       - name: Patch the test app (clone mode) and verify
@@ -95,7 +95,7 @@ jobs:
         run: ./gradlew -I ../tools/no-github-packages.gradle :patch-library:jar --no-daemon
       - name: Build store
         working-directory: store
-        run: ./gradlew -I ../tools/central-mirror.gradle :app:assembleVanillaRelease :app:testVanillaReleaseUnitTest --no-daemon
+        run: ./gradlew -I ../tools/central-mirror.gradle :app:assembleVanillaRelease :app:testVanillaDebugUnitTest --no-daemon
       - name: Sign for test installs
         run: |
           mkdir -p out
