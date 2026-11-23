@@ -55,7 +55,7 @@ class SafetyNetAllAppsFragment : PreferenceFragmentCompat() {
             val playIntegrityData = VendingPreferences.getPlayIntegrityAppList(context)
             val apps = withContext(Dispatchers.IO) {
                 val playPairs = PlayIntegrityData.loadDataSet(playIntegrityData).map { it.packageName to it.lastTime }
-                val res = (database.recentApps + playPairs).map { app ->
+                val res = (database.recentApps + playPairs).groupBy { it.first }.map { (pkg, uses) -> pkg to uses.maxOf { it.second } }.map { app ->
                     val pref = AppIconPreference(context)
                     pref.packageName = app.first
                     pref.summary = when {

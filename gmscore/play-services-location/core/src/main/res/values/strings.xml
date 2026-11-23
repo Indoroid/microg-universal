@@ -64,7 +64,6 @@
     <string name="pref_location_timeline_upload_summary">"Synchronize location history to Google servers, so it can be displayed on other devices."</string>
     <string name="pref_location_timeline_accounts_title">Manage by Google account</string>
     <string name="pref_location_timeline_accounts_summary">Choose an account to manage its Timeline and server synchronization settings.</string>
-</resources>
 
     <!-- RE strings -->
     <string name="prefcat_location_maps_title">Google Maps</string>

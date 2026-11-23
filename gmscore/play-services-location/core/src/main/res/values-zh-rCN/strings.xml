@@ -9,7 +9,6 @@
     <string name="prefcat_location_wifi_title">Wi-Fi 位置</string>
     <string name="prefcat_location_cell_title">移动网络位置</string>
     <string name="prefcat_geocoder_title">地址解析器</string>
-    <string name="pref_location_wifi_online_enabled_title">从在线服务请求</string>
     <string name="pref_location_wifi_online_enabled_summary">从在线位置服务获取基于 Wi-Fi 的位置。</string>
     <string name="pref_location_wifi_moving_enabled_title">从热点请求</string>
     <string name="pref_location_wifi_moving_enabled_summary">连接时直接从支持的热点获取 Wi-Fi 位置。</string>
@@ -25,7 +24,6 @@
     <string name="location_app_last_access_at">最后访问：<xliff:g example="Yesterday, 02:20 PM">%1$s</xliff:g></string>
     <string name="pref_location_app_force_coarse_title">强制粗略位置</string>
     <string name="pref_location_app_force_coarse_summary">始终向此应用返回粗略位置，忽略其权限级别。</string>
-    <string name="prefcat_app_last_location">最后报告的位置</string>
     <string name="location_settings_dialog_message_title_for_better_experience">为了获得更好的体验，请开启设备定位，该功能使用 microG 的位置服务</string>
     <string name="location_settings_dialog_message_title_to_continue">要继续，请开启设备定位，该功能使用 microG 的位置服务</string>
     <string name="location_settings_dialog_message_details_start_paragraph">您的设备需要：</string>
@@ -44,8 +42,6 @@
     <string name="pref_location_source_suggested">建议</string>
     <string name="pref_location_import_export_title">导入或导出位置数据</string>
     <string name="notification_config_required_title">需要配置</string>
-    <string name="notification_config_required_text_online_sources">要继续使用在线位置服务，您需要选择一个位置数据服务。</string>
-    <string name="location_data_export_wifi_title">导出本地 Wi-Fi 位置数据库</string>
     <string name="location_data_export_cell_title">导出本地基站位置数据库</string>
     <string name="location_data_import_title">从文件导入位置数据</string>
     <string name="location_data_import_result_toast">已导入 %1$d 条记录。</string>

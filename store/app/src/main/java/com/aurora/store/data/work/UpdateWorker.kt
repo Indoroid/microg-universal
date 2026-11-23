@@ -26,6 +26,7 @@ import com.aurora.gplayapi.model.InstalledApp
 import com.aurora.store.BuildConfig
 import com.aurora.store.data.helper.DownloadHelper
 import com.aurora.store.data.helper.UpdateHelper
+import com.aurora.store.data.patcher.MicroGPatcher
 import com.aurora.store.data.installer.AppInstaller
 import com.aurora.store.data.model.BuildType
 import com.aurora.store.data.model.SelfUpdate
@@ -253,6 +254,9 @@ class UpdateWorker @AssistedInject constructor(
                     }
                 }
             }.map { it.packageName }
+                // Apps installed through the microG patch (clones included) update from their Play package.
+                .map { MicroGPatcher.playPackageName(context, it) }
+                .distinct()
 
             // HyperOS and GrapheneOS block third-party updates of pristine system apps.
             val osBlocksSystemAppUpdates = isHyperOS || isGrapheneOS
@@ -271,7 +275,10 @@ class UpdateWorker @AssistedInject constructor(
                 installed = installedApps(filteredPackages)
             )
                 .filter { it.displayName.isNotEmpty() }
-                .filter { PackageUtil.isUpdatable(context, it.packageName, it.versionCode) }
+                .filter {
+                    val installed = MicroGPatcher.installedFor(context, it.packageName) ?: it.packageName
+                    PackageUtil.isUpdatable(context, installed, it.versionCode)
+                }
                 .toMutableList()
 
             // Aurora Store's own update comes from the feed, not Play. When one is

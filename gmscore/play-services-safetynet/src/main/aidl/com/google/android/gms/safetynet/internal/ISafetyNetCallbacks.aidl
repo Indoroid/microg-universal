@@ -18,4 +18,5 @@ interface ISafetyNetCallbacks {
     oneway void onHarmfulAppsInfo(in Status status, in HarmfulAppsInfo harmfulAppsInfo) = 7;
     oneway void onInitSafeBrowsingResult(in Status status) = 10;
     oneway void onRemoveHarmfulAppData(in Status status, in RemoveHarmfulAppData removeHarmfulAppData) = 14;
+    oneway void onTrustTokenResult(in Status status, String token, int type) = 15;
 }

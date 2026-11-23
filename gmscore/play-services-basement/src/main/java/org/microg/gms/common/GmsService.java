@@ -346,7 +346,7 @@ public enum GmsService {
 
 
     MULTIPACKAGE_DEBUG(325),
-    TIME(326),
+    TIME(326, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.time.trustedtime.service.START", "com.google.android.gms.time.trustedtime.service.START"),
     TRUSTAGENT_ACTIVE_UNLOCK(327),
     QUICKSTART(328),
     CORE_SETTINGS(329),
@@ -363,7 +363,7 @@ public enum GmsService {
     MLBENCHMARK_INSTALLER(340),
     FACTORY_RESET_PROTECTION(341),
     NOTIFICATIONS(342),
-    GOOGLE_AUTH_AANG(343, "com.google.android.gms.auth.aang.events.services.START"),
+    GOOGLE_AUTH_AANG(343, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.auth.aang.events.services.START", "com.google.android.gms.auth.aang.events.services.START"),
 
     ANTIFINGERPRINTING(345),
     CALLSTREAMING(346),
@@ -374,7 +374,7 @@ public enum GmsService {
     SETUP_SERVICES_REMOTE_SETUP(351),
     IDENTITY_CREDENTIALS(352, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.identitycredentials.service.START", "com.google.android.gms.identitycredentials.service.START"),
     AMBIENT_CONTEXT(353),
-    SAFE_BROWSING(354),
+    SAFE_BROWSING(354, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.safebrowsing.SafeBrowsingService.START", "com.google.android.gms.safebrowsing.SafeBrowsingService.START"),
     MULTIDEVICE_API_FEATURE_SETTINGS(355),
     MULTIDEVICE_API_PROFILE(356),
     DATA_COMPLIANCE(357),
@@ -434,7 +434,7 @@ public enum GmsService {
     MISSED_CALL_RETRIEVER(411),
     HEALTH_TRACKING(412),
     FAMILY_CONTEXTUAL_CARD(413),
-    CLEARCUT_LOGGER_SAMPLING(414, "com.google.android.gms.clearcut.sampler.service.START"),
+    CLEARCUT_LOGGER_SAMPLING(414, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.clearcut.sampler.service.START", "com.google.android.gms.clearcut.sampler.service.START"),
     TRACING(415),
     DEPENDENCY_INSTALLER(416),
     ADVANCED_PROTECTION(417),
@@ -468,7 +468,13 @@ public enum GmsService {
     CLEARCUT_LOG_MANAGER(445),
 
     NATIVE_HOTLOADER(447),
-    TELEMETRY_NOTIFICATION(449, "com.google.android.gms.common.telemetry.notification.service.START"),
+    TELEMETRY_NOTIFICATION(449, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.common.telemetry.notification.service.START", "com.google.android.gms.common.telemetry.notification.service.START"),
+    LOG_AGGREGATION(446, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.logaggregation.service.START", "com.google.android.gms.logaggregation.service.START"),
+    GOOGLE_ONE_STORAGE_MANAGEMENT(450, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.googleone.storagemanagement.zeroparty.service.START", "com.google.android.gms.googleone.storagemanagement.zeroparty.service.START"),
+    GESTURE_EXCHANGE(451, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.gestureexchange.service.START", "com.google.android.gms.gestureexchange.service.START"),
+    STATS_CROSS_USER(452, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.stats.service.CROSS_USER_START", "com.google.android.gms.stats.service.CROSS_USER_START"),
+    ONBOARDING_CONSENT(460, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.onboardingconsent.api.ConsentManagerApiService.START", "com.google.android.gms.onboardingconsent.api.ConsentManagerApiService.START"),
+    REMOTE_LOCK_SETTINGS(477, BuildConfig.BASE_PACKAGE_NAME + ".android.gms.mdm.remotelock.RemoteLockSettingsApiService.START", "com.google.android.gms.mdm.remotelock.RemoteLockSettingsApiService.START"),
     ;
 
     public int SERVICE_ID;

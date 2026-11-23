@@ -27,6 +27,19 @@
             android:title="@string/list_item_see_all" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:layout="@layout/preference_material_category"
+        android:title="@string/pref_safetynet_play_protect_category"
+        android:dependency="pref_safetynet_enabled"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="pref_safetynet_verify_apps"
+            android:layout="@layout/preference_material_single"
+            android:persistent="false"
+            android:title="@string/pref_safetynet_verify_apps_title"
+            android:summary="@string/pref_safetynet_verify_apps_summary"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:layout="@layout/preference_category_no_label"
         android:dependency="pref_safetynet_enabled">
         <Preference

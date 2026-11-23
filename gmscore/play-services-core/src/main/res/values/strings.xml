@@ -608,4 +608,12 @@ Install the ARMv7 or Universal APK instead."</string>
     <string name="abi_mismatch_download_armv7">Download ARMv7 APK</string>
     <string name="abi_mismatch_downloading_title">Downloading correct variant…</string>
 
+    <string name="pref_safetynet_play_protect_category">Play Protect</string>
+    <string name="pref_safetynet_verify_apps_title">Scan apps for harmful behaviour</string>
+    <string name="pref_safetynet_verify_apps_summary">Apps asking for Play Protect status get it from here. Installed apps are checked against Google Safe Browsing by APK hash only.</string>
+    <string name="pref_network_category">Network</string>
+    <string name="pref_network_google_enabled_title">Allow connecting to Google servers</string>
+    <string name="pref_network_google_enabled_summary">When off, microG makes no connection to Google: sign-in, push, check-in and Google APIs stop working.</string>
+    <string name="pref_network_google_use_tor_title">Connect to Google via Tor</string>
+    <string name="pref_network_google_use_tor_summary">Routes microG\'s Google connections through Orbot (SOCKS 127.0.0.1:9050). Nothing connects while Orbot is not running.</string>
 </resources>

@@ -33,6 +33,7 @@ class UpdaterApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        org.microg.gms.common.GoogleNetworkPolicy.install(this)
         // The values-v31 theme pins the md_theme palette, and this overlay is applied on
         // top of it, so the wallpaper colours win wherever the system provides them.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

@@ -153,14 +153,22 @@ public class GcmDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(FIELD_ALLOW_REGISTER, allowRegister ? 1 : 0);
-        db.update(TABLE_APPS, cv, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName});
+        // Settings for an app that never contacted push yet must still stick.
+        if (db.update(TABLE_APPS, cv, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName}) == 0) {
+            cv.put(FIELD_PACKAGE_NAME, packageName);
+            db.insert(TABLE_APPS, null, cv);
+        }
     }
 
     public synchronized void setAppWakeForDelivery(String packageName, boolean wakeForDelivery) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(FIELD_WAKE_FOR_DELIVERY, wakeForDelivery ? 1 : 0);
-        db.update(TABLE_APPS, cv, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName});
+        // Settings for an app that never contacted push yet must still stick.
+        if (db.update(TABLE_APPS, cv, FIELD_PACKAGE_NAME + " LIKE ?", new String[]{packageName}) == 0) {
+            cv.put(FIELD_PACKAGE_NAME, packageName);
+            db.insert(TABLE_APPS, null, cv);
+        }
     }
 
 

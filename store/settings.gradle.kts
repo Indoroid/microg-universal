@@ -16,11 +16,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // libsu is only available via jitpack
+        // libsu, and the Morphe patcher's ARSCLib/smali, are only available via jitpack
         maven("https://jitpack.io/") {
             content {
                 includeModule("com.github.topjohnwu.libsu", "core")
+                includeGroupByRegex("com\\.github\\.MorpheApp.*")
             }
+        }
+        // morphe-patcher, built from source and published locally (patches/README)
+        mavenLocal {
+            content { includeGroup("app.morphe") }
         }
         // Only included in huawei variants
         maven("https://developer.huawei.com/repo/") {

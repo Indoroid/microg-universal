@@ -344,8 +344,6 @@
     <string name="credentials_assisted_choose_account_error_tips">帐户异常</string>
     <string name="credentials_assisted_signin_button_text_long">使用 Google 登录</string>
     <string name="credentials_assisted_signin_add_account">添加帐户</string>
-    <string name="credentials_service_sign_in_with_google_label">使用 Google 登录</string>
-    <string name="credentials_service_remote_custom_subtitle">安全密钥、智能手机或平板电脑</string>
     <string name="limited_services_dialog_information">您正在使用 microG 受限服务。与常规的 microG 服务不同，此版本仅适用于使用 microG 库的应用，而非 Google Play 上的应用。这意味着大多数应用将忽略这些服务。</string>
     <string name="limited_services_dialog_information_ack">我了解</string>
     <string name="games_achievement_list_title">成就</string>
@@ -435,11 +433,6 @@
     <string name="camera_permission_dialog_button">确定</string>
     <string name="camera_permission_dialog_message">microG 服务需要访问您设备的相机以扫描 %1$s 的代码。\n\n要启用，请在设置中授予 microG 服务相机权限。</string>
     <string name="camera_permission_dialog_title">需要相机权限</string>
-    <string name="pref_app_install_settings_title">应用安装程序设置</string>
-    <string name="pref_app_install_switch_title">允许安装应用</string>
-    <string name="pref_app_install_other_apps_note">授权后，可以安装从其他来源提供的应用。</string>
-    <string name="pref_app_install_permission_instruction">为确保已安装的应用正常运行，请授权 microG Companion 安装从其他来源下载的应用。</string>
-    <string name="prefcat_app_install_list_title">使用应用安装程序的应用</string>
     <string name="service_name_google_location_sharing">Google 位置共享</string>
     <string name="location_sharing_description">从这台设备管理您在 Google 应用和服务中的实时位置共享</string>
     <string name="location_sharing_learn_more">详细了解“位置共享”</string>

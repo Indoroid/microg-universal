@@ -6,7 +6,7 @@
   ~ SPDX-License-Identifier: GPL-3.0-or-later
   -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" translatable="false">"Aurora Store"</string>
+    <string name="app_name" translatable="false">"Aurora Store (microG)"</string>
     <string name="download_speed_bytes" translatable="false">%1$d B/s</string>
     <string name="download_speed_kb" translatable="false">%1$s KB/s</string>
     <string name="download_speed_mb" translatable="false">%1$s MB/s</string>
@@ -760,4 +760,16 @@
 
     <!-- Network Dialog -->
     <string name="action_check">"Check"</string>
+    <!-- microg-universal -->
+    <string name="pref_microg_category">microG</string>
+    <string name="pref_microg_patch_title">Patch apps for microG</string>
+    <string name="pref_microg_patch_summary">Apps that need Google Play services are patched before they are installed, so they use microG instead</string>
+    <string name="pref_microg_clone_title">Install as clone</string>
+    <string name="pref_microg_clone_summary_on">Patched apps get their own package name (package.morphe) and install next to preinstalled Google apps</string>
+    <string name="pref_microg_clone_summary_off">Patched apps keep their original package name. Installing fails if the original Google-signed app is installed</string>
+    <string name="patch_apk_title">Patch for microG</string>
+    <string name="patch_apk_action">Patch and install</string>
+    <string name="patch_apk_working">This can take a few minutes for large apps.</string>
+    <string name="installer_status_patching">Patching for microG…</string>
+    <string name="installer_status_patch_failed">Could not patch the app for microG</string>
 </resources>

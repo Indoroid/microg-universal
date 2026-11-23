@@ -10,7 +10,7 @@
 #   e2e.sh all               check, build, vm, ui, device
 set -uo pipefail
 R=$(cd "$(dirname "$0")/.." && pwd)
-LIB=${LIB:-/home/user/src/morphe-patches-library}
+LIB=${LIB:-$R/patches}
 export ANDROID_HOME=${ANDROID_HOME:-/opt/android-sdk}
 ADB=$ANDROID_HOME/platform-tools/adb
 CONTRACT=app/morphe/extension/microg/contract/MicroGContract.java
@@ -30,8 +30,8 @@ cmd_build() {
   cmd_check
   (cd "$LIB" && ./gradlew -q -I "$NOGHP" :patch-library:jar --no-daemon) || exit 1
   MORPHE_PATCHES_LIBRARY_JAR=$(LIBJAR) "$GRADLE" -q -p "$R/harness" installDist --no-daemon || exit 1
-  "$GRADLE" -q -p "$R/gmscompat-stub" assembleRelease --no-daemon || exit 1
-  cp "$R/gmscompat-stub/app/build/outputs/apk/release/app-release.apk" "$R/out/gmscompat-stub.apk"
+  "$GRADLE" -q -p "$R/stub" assembleRelease --no-daemon || exit 1
+  cp "$R/stub/app/build/outputs/apk/release/app-release.apk" "$R/out/gmscompat-stub.apk"
   echo "built: $(LIBJAR), harness, out/gmscompat-stub.apk"
 }
 

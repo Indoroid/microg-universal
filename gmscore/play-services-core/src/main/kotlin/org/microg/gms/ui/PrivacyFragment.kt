@@ -16,6 +16,8 @@
 
 package org.microg.gms.ui
 
+import org.microg.gms.common.GoogleNetworkPolicy
+
 import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Build
@@ -81,8 +83,21 @@ class PrivacyFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun bindNetworkPolicy() {
+        val ctx = requireContext()
+        findPreference<TwoStatePreference>(GoogleNetworkPolicy.KEY_ALLOW_GOOGLE)?.apply {
+            isChecked = GoogleNetworkPolicy.isGoogleAllowed(ctx)
+            setOnPreferenceChangeListener { _, v -> GoogleNetworkPolicy.setGoogleAllowed(ctx, v == true); true }
+        }
+        findPreference<TwoStatePreference>(GoogleNetworkPolicy.KEY_USE_TOR)?.apply {
+            isChecked = GoogleNetworkPolicy.isTorEnabled(ctx)
+            setOnPreferenceChangeListener { _, v -> GoogleNetworkPolicy.setTorEnabled(ctx, v == true); true }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+        bindNetworkPolicy()
         updateSettings()
     }
 

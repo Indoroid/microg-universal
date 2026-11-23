@@ -25,6 +25,7 @@ import org.microg.gms.BaseService
 import org.microg.gms.common.GmsService
 import org.microg.gms.common.PackageUtils
 import org.microg.gms.droidguard.core.DroidGuardPreferences
+import org.microg.gms.safetynet.SafetyNetAppAccess
 import org.microg.gms.safetynet.SafetyNetPreferences
 import org.microg.gms.utils.warnOnTransactionIssues
 
@@ -33,6 +34,8 @@ private const val TAG = "RecaptchaService"
 class RecaptchaService : BaseService(TAG, GmsService.RECAPTCHA) {
     private fun getRecaptchaImpl(packageName: String): ArrayList<RecaptchaImpl> {
         val list = ArrayList<RecaptchaImpl>()
+        // The per-app SafetyNet switch covers reCAPTCHA Enterprise too.
+        if (!SafetyNetAppAccess.isAllowed(this, packageName)) return arrayListOf(RecaptchaImpl.Unsupported)
         if (SafetyNetPreferences.isEnabled(this) && SDK_INT >= 19) {
             list.add(RecaptchaWebImpl(this, packageName, lifecycle))
         }

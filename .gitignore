@@ -8,3 +8,16 @@ out/deps/
 out/real/
 out/device/*.logcat.txt
 out/release/
+
+# monorepo builds
+**/build/
+**/.gradle/
+**/.kotlin/
+local.properties
+docs/PLAN-v2.md
+docs/private/
+out/suite/*/device/*.logcat.txt
+out/suite/*/*.log
+out/suite/*/device/
+out/suite/*/device.tsv
+docs/PLAN.md

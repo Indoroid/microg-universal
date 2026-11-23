@@ -33,6 +33,8 @@ import org.json.JSONObject
 import org.microg.gms.checkin.CheckinPreferences
 import org.microg.gms.droidguard.core.DroidGuardPreferences
 import org.microg.gms.safetynet.SafetyNetDatabase
+import androidx.preference.SwitchPreferenceCompat
+import org.microg.gms.safetynet.VerifyApps
 import org.microg.gms.safetynet.SafetyNetPreferences
 import org.microg.gms.safetynet.SafetyNetRequestType.*
 import org.microg.gms.utils.singleInstanceOf
@@ -62,6 +64,10 @@ class SafetyNetFragment : PreferenceFragmentCompat() {
         appsAll = preferenceScreen.findPreference("pref_safetynet_apps_all") ?: appsAll
         appsNone = preferenceScreen.findPreference("pref_safetynet_apps_none") ?: appsNone
         droidguardUnsupported = preferenceScreen.findPreference("pref_droidguard_unsupported") ?: droidguardUnsupported
+        preferenceScreen.findPreference<SwitchPreferenceCompat>("pref_safetynet_verify_apps")?.apply {
+            isChecked = VerifyApps.isEnabled(requireContext())
+            setOnPreferenceChangeListener { _, v -> VerifyApps.setEnabled(requireContext(), v == true); true }
+        }
 
         runReCaptcha.isVisible = RECAPTCHA_SITE_KEY != null
         runReCaptchaEnterprise.isVisible = RECAPTCHA_ENTERPRISE_SITE_KEY != null

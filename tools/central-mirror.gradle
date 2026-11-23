@@ -1,0 +1,11 @@
+// Prefer Google's Maven Central mirror (Central answers 429 to busy shared IPs).
+def mirror = "https://maven-central.storage-download.googleapis.com/maven2/"
+def addFirst = { RepositoryHandler repos, String n ->
+    def r = repos.maven { url = mirror; name = n }
+    repos.remove(r); repos.addFirst(r)
+}
+settingsEvaluated { settings ->
+    addFirst(settings.pluginManagement.repositories, "centralMirrorPlugins")
+    addFirst(settings.dependencyResolutionManagement.repositories, "centralMirror")
+}
+allprojects { addFirst(buildscript.repositories, "centralMirrorBuildscript") }

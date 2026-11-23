@@ -104,9 +104,9 @@ if (!ignoreGit) {
   }
 }
 
-// RE specific version name and code
-def ourGmsVersionCode = 255070315
-def ourGmsVersionName = "7.3.2"
+// microg-universal: mainline microG 0.3.18 (GMS 25.24.32) + RE layer; code stays above MicroG-RE 7.3.2
+def ourGmsVersionCode = 255070400
+def ourGmsVersionName = "0.3.18.252432.1"
 def ourVendingVersionCode = ourGmsVersionCode
 def ourVendingVersionName = ourGmsVersionName
 

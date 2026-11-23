@@ -55,4 +55,8 @@ public class ISafetyNetCallbacksDefaultStub extends ISafetyNetCallbacks.Stub {
     @Override
     public void onRemoveHarmfulAppData(Status status, RemoveHarmfulAppData removeHarmfulAppData) throws RemoteException {
     }
+
+    @Override
+    public void onTrustTokenResult(Status status, String token, int type) throws RemoteException {
+    }
 }

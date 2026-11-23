@@ -73,4 +73,25 @@
         android:summary="@string/pref_auth_allow_find_devices_summary"
         android:title="@string/pref_auth_allow_find_devices_title"
         app:iconSpaceReserved="false" />
+
+    <PreferenceCategory
+        android:layout="@layout/preference_material_category"
+        android:title="@string/pref_network_category"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:persistent="false"
+            android:key="network_google_enabled"
+            android:layout="@layout/preference_material_top"
+            android:summary="@string/pref_network_google_enabled_summary"
+            android:title="@string/pref_network_google_enabled_title"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:persistent="false"
+            android:key="network_google_use_tor"
+            android:dependency="network_google_enabled"
+            android:layout="@layout/preference_material_bottom"
+            android:summary="@string/pref_network_google_use_tor_summary"
+            android:title="@string/pref_network_google_use_tor_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

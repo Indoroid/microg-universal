@@ -1,0 +1,25 @@
+package	version	abi	result	call_sites	hooks	gms_left	clone	seconds
+com.google.android.apps.docs	2.26.107.3.arm64-v8a.alldpi	arm64-v8a	PASS	100	2	0	clone: 14 authorities, 315 strings and 0 static fields rewritten	21
+com.google.android.inputmethod.latin	17.2.3.895242737-preload-arm64-v8a	arm64-v8a	PASS	34	2	0	clone: 9 authorities, 4 strings and 1 static fields rewritten	20
+com.google.android.gm	2026.02.23.876771157.Release	arm64-v8a	PASS	94	2	0	clone: 29 authorities, 56 strings and 0 static fields rewritten	61
+com.google.android.calculator	9.1 (886477075)	none	PASS	12	1	0	clone: 1 authorities, 2 strings and 0 static fields rewritten	8
+com.google.android.calendar	2026.03.0-857911644-release	arm64-v8a,armeabi-v7a,x86,x86_64	PASS	66	2	0	clone: 7 authorities, 58 strings and 0 static fields rewritten	23
+com.android.chrome	145.0.7632.218	arm64-v8a	PASS	51	1	0	clone: 10 authorities, 5 strings and 0 static fields rewritten	29
+com.google.android.deskclock	8.7 (881990392)	none	PASS	24	1	0	clone: 2 authorities, 26 strings and 0 static fields rewritten	13
+com.google.android.contacts	4.74.28.876719826	arm64-v8a,armeabi-v7a,x86,x86_64	PASS	53	2	0	clone: 10 authorities, 22 strings and 0 static fields rewritten	17
+com.google.android.dialer	226.0.928208984	arm64-v8a	PASS	67	2	0	clone: 16 authorities, 79 strings and 0 static fields rewritten	26
+com.google.android.apps.docs.editors.docs	1.21.482.04.40	arm64-v8a	PASS	43	2	0	clone: 15 authorities, 12 strings and 0 static fields rewritten	17
+com.google.android.apps.nbu.files	1.9456.838368644.0-release	arm64-v8a	PASS	53	2	0	clone: 8 authorities, 17 strings and 0 static fields rewritten	10
+com.google.android.keep	5.26.042.00.90	arm64-v8a	PASS	48	2	0	clone: 9 authorities, 39 strings and 0 static fields rewritten	12
+com.google.android.apps.maps	26.16.12.898594237	arm64-v8a	PASS	84	1	0	clone: 11 authorities, 13 strings and 0 static fields rewritten	27
+com.google.android.apps.messaging	messages.android_20260417_00_RC10.phone_dynamic	arm64-v8a	PASS	103	2	0	clone: 25 authorities, 73 strings and 2 static fields rewritten	32
+com.google.android.apps.photos	7.67.0.882706237	arm64-v8a	PASS	77	1	0	clone: 17 authorities, 103 strings and 0 static fields rewritten	36
+com.google.android.apps.recorder	4.2.20251118.847964105	arm64-v8a	PASS	37	2	0	clone: 6 authorities, 4 strings and 0 static fields rewritten	12
+com.google.android.apps.docs.editors.sheets	1.21.482.04.40	arm64-v8a	PASS	39	2	0	clone: 15 authorities, 17 strings and 0 static fields rewritten	15
+com.google.android.apps.docs.editors.slides	1.21.482.05.40	arm64-v8a	PASS	45	2	0	clone: 14 authorities, 15 strings and 0 static fields rewritten	16
+com.google.android.tts	googletts.google-speech-apk_20251028.02_p2.827711934	arm64-v8a	PASS	19	1	0	clone: 6 authorities, 13 strings and 0 static fields rewritten	8
+com.google.android.marvin.talkback	17.0.0.889642762	arm64-v8a	PASS	37	2	0	clone: 9 authorities, 16 strings and 0 static fields rewritten	11
+com.google.android.apps.tachyon	347.0.870744322.duo.android_20260216.01_p0	arm64-v8a	PASS	78	2	0	clone: 8 authorities, 34 strings and 0 static fields rewritten	25
+com.google.android.play.games	2023.01.40470 (501577610.501577610-000400)	arm64-v8a	PASS	42	0	0	clone: 5 authorities, 23 strings and 0 static fields rewritten	9
+com.google.android.youtube	21.25.523	arm64-v8a	PASS	79	2	0	clone: 8 authorities, 11 strings and 0 static fields rewritten	27
+com.google.android.apps.youtube.music	9.10.52	arm64-v8a	PASS	61	2	0	clone: 6 authorities, 13 strings and 0 static fields rewritten	17

@@ -48,7 +48,26 @@ kotlin {
     }
 }
 
+// The patch library jar bundles its runtime extension (.dex) next to its classes, which R8 rejects:
+// classes go on the classpath, the .dex files become Java resources (Patch.extendWith reads them
+// through the class loader).
+val microgPatchesJar = fileTree("../../patches/patch-library/build/libs") {
+    include("morphe-patches-library-*.jar"); exclude("*-sources.jar", "*-javadoc.jar")
+}
+val microgPatchClasses by tasks.registering(Jar::class) {
+    from({ microgPatchesJar.map { zipTree(it) } }) { exclude("**/*.dex") }
+    archiveFileName.set("microg-patches-classes.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("microg"))
+}
+val microgExtensionsDir = layout.buildDirectory.dir("microg/extensions").get().asFile
+val microgPatchExtensions by tasks.registering(Sync::class) {
+    from({ microgPatchesJar.map { zipTree(it) } }) { include("**/*.dex") }
+    into(microgExtensionsDir)
+}
+tasks.named("preBuild") { dependsOn(microgPatchExtensions, microgPatchClasses) }
+
 configure<ApplicationExtension> {
+    sourceSets.getByName("main").resources.directories.add(microgExtensionsDir.path)
     namespace = "com.aurora.store"
     compileSdk {
         version = release(37) {
@@ -57,7 +76,7 @@ configure<ApplicationExtension> {
     }
 
     defaultConfig {
-        applicationId = "com.aurora.store"
+        applicationId = "com.aurora.store.microg"
         minSdk {
             version = release(23)
         }
@@ -190,6 +209,10 @@ ktlint {
 }
 
 dependencies {
+
+    // On-device microG patching (patches/ in this monorepo)
+    implementation("app.morphe:morphe-patcher:2.5.0")
+    implementation(files(microgPatchClasses))
 
     // Google's Goodies
     implementation(libs.google.android.material)

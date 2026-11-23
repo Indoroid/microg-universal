@@ -103,6 +103,17 @@ public class McsService extends Service implements Handler.Callback {
     // See https://github.com/microg/GmsCore/issues/408
     // Likely if the main port 5228 is blocked by a firewall, the other 52xx are blocked as well
     public static final int[] SERVICE_PORTS = {5228, 443};
+    /**
+     * Fallback endpoints after {@link #SERVICE_HOST}, in the order Play services tries them
+     * (alt1..alt4 on 443 first for NAT-friendliness, alt5..alt8 on 5228).
+     */
+    private static final String[] FALLBACK_ENDPOINTS = {
+            "alt1-mtalk.google.com:443", "alt2-mtalk.google.com:443", "alt3-mtalk.google.com:443",
+            "alt4-mtalk.google.com:443", "alt5-mtalk.google.com:5228", "alt6-mtalk.google.com:5228",
+            "alt7-mtalk.google.com:5228", "alt8-mtalk.google.com:5228"
+    };
+    /** Endpoint that last connected; tried first on reconnect. */
+    private static String lastGoodEndpoint;
 
     private static final int WAKELOCK_TIMEOUT = 5000;
     // RE changes start
@@ -463,7 +474,7 @@ public class McsService extends Service implements Handler.Callback {
         }
     }
 
-    private void startHandshake(SSLSocket sslSocket) throws Exception {
+    private void startHandshake(SSLSocket sslSocket, String host) throws Exception {
         if (SDK_INT >= 24) {
             SSLParameters params = sslSocket.getSSLParameters();
             params.setEndpointIdentificationAlgorithm("HTTPS");
@@ -471,27 +482,33 @@ public class McsService extends Service implements Handler.Callback {
         }
         sslSocket.startHandshake();
         if (SDK_INT < 24) {
-            if (!HttpsURLConnection.getDefaultHostnameVerifier().verify(SERVICE_HOST, sslSocket.getSession())) {
-                throw new SSLException("Hostname verification failed for " + SERVICE_HOST);
+            if (!HttpsURLConnection.getDefaultHostnameVerifier().verify(host, sslSocket.getSession())) {
+                throw new SSLException("Hostname verification failed for " + host);
             }
         }
     }
 
-    private void connect(int port) throws Exception {
+    private void connect(String host, int port) throws Exception {
         this.wasTornDown = false;
 
-        logd(this, "Starting MCS connection to port " + port + "...");
+        logd(this, "Starting MCS connection to " + host + ":" + port + "...");
         // RE changes start
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(SERVICE_HOST, port), CONNECT_TIMEOUT_MS);
-        logd(this, "Connected to " + SERVICE_HOST + ":" + port);
-        sslSocket = SSLContext.getDefault().getSocketFactory().createSocket(socket, SERVICE_HOST, port, true);
+        // Raw socket: the settings' Google network policy is applied here, not via the ProxySelector.
+        if (!org.microg.gms.common.GoogleNetworkPolicy.INSTANCE.isGoogleAllowed(this)) {
+            throw new java.io.IOException("Connections to Google servers are disabled in settings");
+        }
+        boolean tor = org.microg.gms.common.GoogleNetworkPolicy.INSTANCE.isTorEnabled(this);
+        Socket socket = tor ? new Socket(new java.net.Proxy(java.net.Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 9050))) : new Socket();
+        // Through Tor the host name is resolved by the proxy.
+        socket.connect(tor ? InetSocketAddress.createUnresolved(host, port) : new InetSocketAddress(host, port), CONNECT_TIMEOUT_MS);
+        logd(this, "Connected to " + host + ":" + port);
+        sslSocket = SSLContext.getDefault().getSocketFactory().createSocket(socket, host, port, true);
         // Bound the TLS handshake, then restore blocking reads (liveness is tracked by heartbeats)
         sslSocket.setSoTimeout(CONNECT_TIMEOUT_MS);
-        startHandshake((SSLSocket) sslSocket);
+        startHandshake((SSLSocket) sslSocket, host);
         sslSocket.setSoTimeout(0);
         // RE changes end
-        logd(this, "Activated SSL with " + SERVICE_HOST + ":" + port);
+        logd(this, "Activated SSL with " + host + ":" + port);
         inputStream = new McsInputStream(sslSocket.getInputStream(), rootHandler);
         outputStream = new McsOutputStream(sslSocket.getOutputStream(), rootHandler);
         inputStream.start();
@@ -520,19 +537,28 @@ public class McsService extends Service implements Handler.Callback {
             return;
         }
 
+        java.util.LinkedHashSet<String> endpoints = new java.util.LinkedHashSet<>();
+        if (lastGoodEndpoint != null) endpoints.add(lastGoodEndpoint);
+        for (int port : SERVICE_PORTS) endpoints.add(SERVICE_HOST + ":" + port);
+        java.util.Collections.addAll(endpoints, FALLBACK_ENDPOINTS);
+
         Exception exception = null;
-        for (int port : SERVICE_PORTS) {
+        for (String endpoint : endpoints) {
+            int sep = endpoint.lastIndexOf(':');
+            String host = endpoint.substring(0, sep);
+            int port = Integer.parseInt(endpoint.substring(sep + 1));
             try {
-                connect(port);
+                connect(host, port);
+                lastGoodEndpoint = endpoint;
                 return;
             } catch (Exception e) {
                 exception = e;
-                Log.w(TAG, "Exception while connecting to " + SERVICE_HOST + ":" + port, e);
+                Log.w(TAG, "Exception while connecting to " + endpoint, e);
                 closeAll();
             }
         }
 
-        logd(this, "Unable to connect to all different ports, retrying later");
+        logd(this, "Unable to connect to any MCS endpoint, retrying later");
         rootHandler.sendMessage(rootHandler.obtainMessage(MSG_TEARDOWN, exception));
     }
 

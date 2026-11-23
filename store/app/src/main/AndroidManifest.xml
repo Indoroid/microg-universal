@@ -52,6 +52,7 @@
 
     <application
         android:name=".AuroraApp"
+        android:largeHeap="true"
         android:allowBackup="true"
         android:banner="@drawable/ic_tv_banner"
         android:dataExtractionRules="@xml/backup_rules"
@@ -117,6 +118,21 @@
                 <data android:scheme="https" />
                 <data android:host="market.android.com" />
                 <data android:host="play.google.com" />
+            </intent-filter>
+        </activity>
+
+        <!-- microg-universal: patch an APK the user already has for microG -->
+        <activity
+            android:name=".data.patcher.PatchApkActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/patch_apk_title"
+            android:theme="@style/AppTheme.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/vnd.android.package-archive" />
             </intent-filter>
         </activity>
 

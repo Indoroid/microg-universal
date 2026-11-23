@@ -1,5 +1,7 @@
 package com.google.android.gms.safetynet.internal;
 
+import android.os.Bundle;
+
 import com.google.android.gms.safetynet.internal.ISafetyNetCallbacks;
 
 interface ISafetyNetService {
@@ -11,15 +13,15 @@ interface ISafetyNetService {
     void listHarmfulApps(ISafetyNetCallbacks callbacks) = 4;
     void verifyWithRecaptcha(ISafetyNetCallbacks callbacks, String siteKey) = 5;
 
-//    void fun9(ISafetyNetCallbacks callbacks) = 8;
-//    void fun10(ISafetyNetCallbacks callbacks, String s1, int i1, in byte[] b1) = 9;
-//    void fun11(int i1, in Bundle b1) = 10;
+    void initSafeBrowsingForPackage(ISafetyNetCallbacks callbacks) = 8;
+    void lookupApkDigest(ISafetyNetCallbacks callbacks, String apiKey, int mode, in byte[] digest) = 9;
+    void reportHarmfulApp(int event, in Bundle extras) = 10;
     void initSafeBrowsing(ISafetyNetCallbacks callbacks) = 11;
     void shutdownSafeBrowsing() = 12;
     void isVerifyAppsEnabled(ISafetyNetCallbacks callbacks) = 13;
 //
-//    void fun18(ISafetyNetCallbacks callbacks, int i1, String s1) = 17;
-//    void fun19(ISafetyNetCallbacks callbacks, int i1) = 18;
-//    void removeHarmfulApp(ISafetyNetCallbacks callbacks, String packageName, in byte[] digest) = 19;
-//    void fun21(ISafetyNetCallbacks callbacks, in Bundle b1) = 20;
+    void getSafeBrowsingDatabase(ISafetyNetCallbacks callbacks, int version, String apiKey) = 17;
+    void getSafeBrowsingListState(ISafetyNetCallbacks callbacks, int threatType) = 18;
+    void removeHarmfulApp(ISafetyNetCallbacks callbacks, String packageName, in byte[] digest) = 19;
+    void getTrustToken(ISafetyNetCallbacks callbacks, in Bundle request) = 20;
 }

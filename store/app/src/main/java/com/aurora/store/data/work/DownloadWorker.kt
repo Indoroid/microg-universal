@@ -41,6 +41,7 @@ import com.aurora.store.data.AccountRepository
 import com.aurora.store.data.event.InstallerEvent
 import com.aurora.store.data.helper.DownloadHelper
 import com.aurora.store.data.installer.AppInstaller
+import com.aurora.store.data.patcher.MicroGPatcher
 import com.aurora.store.data.model.Algorithm
 import com.aurora.store.data.model.DownloadInfo
 import com.aurora.store.data.model.DownloadStatus
@@ -356,6 +357,9 @@ class DownloadWorker @AssistedInject constructor(
                 // so the user sees a clean "Downloading -> Installing" progression instead of
                 // a stale download bar lingering at 100%.
                 notifyStatus(DownloadStatus.INSTALLING, isProgress = true)
+                if (MicroGPatcher.shouldPatch(context, download)) {
+                    withContext(Dispatchers.IO) { MicroGPatcher.patch(context, download) }
+                }
                 appInstaller.getPreferredInstaller(notifyOnFallback = true).install(download)
                 Result.success()
             } catch (exception: Exception) {

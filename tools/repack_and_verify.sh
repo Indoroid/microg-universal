@@ -40,8 +40,13 @@ M=$WORK/manifest.txt
 "$BT/aapt2" dump xmltree --file AndroidManifest.xml "$DEST" > "$M"
 check() { if grep -q -- "$2" "$1"; then echo "  ✔ $3"; else echo "  ✘ $3"; FAIL=1; fi; }
 FAIL=0
-check "$M" "\"$VENDOR.android.c2dm.permission.SEND\"" "receiver permission → $VENDOR c2dm SEND"
-check "$M" "\"$VENDOR.android.c2dm.intent.RECEIVE\"" "receiver action → $VENDOR c2dm RECEIVE"
+# FCM receiver checks only apply to apps that had one.
+if "$BT/aapt2" dump xmltree --file AndroidManifest.xml "$ORIG" 2>/dev/null | grep -q '"com.google.android.c2dm.intent.RECEIVE"'; then
+  check "$M" "\"$VENDOR.android.c2dm.permission.SEND\"" "receiver permission → $VENDOR c2dm SEND"
+  check "$M" "\"$VENDOR.android.c2dm.intent.RECEIVE\"" "receiver action → $VENDOR c2dm RECEIVE"
+else
+  echo "  - no FCM receiver in the original app (c2dm checks skipped)"
+fi
 check "$M" "\"$VENDOR.android.gms.SPOOFED_PACKAGE_NAME\"" "SPOOFED_PACKAGE_NAME meta-data"
 check "$M" "\"$VENDOR.android.gms.SPOOFED_PACKAGE_SIGNATURE\"" "SPOOFED_PACKAGE_SIGNATURE meta-data"
 check "$M" "app.morphe.extension.microg.MicroGInitProvider" "init provider"

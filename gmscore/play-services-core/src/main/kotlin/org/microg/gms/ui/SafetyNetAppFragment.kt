@@ -20,6 +20,7 @@ import org.microg.gms.safetynet.SafetyNetDatabase
 import org.microg.gms.safetynet.SafetyNetRequestType.ATTESTATION
 import org.microg.gms.safetynet.SafetyNetRequestType.RECAPTCHA
 import org.microg.gms.safetynet.SafetyNetRequestType.RECAPTCHA_ENTERPRISE
+import org.microg.gms.safetynet.SafetyNetAppAccess
 import org.microg.gms.vending.PlayIntegrityData
 import org.microg.gms.vending.VendingPreferences
 
@@ -44,9 +45,12 @@ class SafetyNetAppFragment : PreferenceFragmentCompat() {
         allowRequests.setOnPreferenceChangeListener { _, newValue ->
             val playIntegrityDataSet = loadPlayIntegrityData()
             val integrityData = packageName?.let { packageName -> playIntegrityDataSet.find { packageName == it.packageName } }
-            if (newValue is Boolean && integrityData != null) {
-                val content = PlayIntegrityData.updateDataSetString(playIntegrityDataSet, integrityData.apply { this.allowed = newValue })
-                VendingPreferences.setPlayIntegrityAppList(requireContext(), content)
+            if (newValue is Boolean) {
+                packageName?.let { SafetyNetAppAccess.setAllowed(requireContext(), it, newValue) }
+                if (integrityData != null) {
+                    val content = PlayIntegrityData.updateDataSetString(playIntegrityDataSet, integrityData.apply { this.allowed = newValue })
+                    VendingPreferences.setPlayIntegrityAppList(requireContext(), content)
+                }
             }
             true
         }
@@ -124,7 +128,7 @@ class SafetyNetAppFragment : PreferenceFragmentCompat() {
                 recents.addPreference(preference)
             }
             recentsNone.isVisible = summaries.isEmpty() && piContent == null
-            allowRequests.isChecked = piContent?.allowed == true
+            allowRequests.isChecked = SafetyNetAppAccess.isAllowed(context, packageName) && (piContent?.allowed ?: true)
         }
 
     }

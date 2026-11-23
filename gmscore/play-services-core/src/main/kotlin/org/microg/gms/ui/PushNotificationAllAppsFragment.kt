@@ -55,21 +55,26 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
         val context = requireContext()
         lifecycleScope.launchWhenResumed {
             val apps = withContext(Dispatchers.IO) {
-                val res = database.appList.map { app ->
+                val known = database.appList.associateBy { it.packageName }
+                // Every installed app able to receive push (declares the C2DM receive permission) is listed,
+                // not only those that already registered.
+                val pushCapable = pushCapablePackages(context)
+                val res = (known.keys + pushCapable).distinct().map { packageName ->
+                    val app = known[packageName]
                     val pref = AppIconPreference(context)
-                    pref.packageName = app.packageName
+                    pref.packageName = packageName
                     pref.summary = when {
-                        app.lastMessageTimestamp > 0 -> getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp))
+                        app != null && app.lastMessageTimestamp > 0 -> getString(R.string.gcm_last_message_at, DateUtils.getRelativeTimeSpanString(app.lastMessageTimestamp))
                         else -> null
                     }
                     pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                         findNavController().navigate(requireContext(), R.id.openGcmAppDetailsFromAll, bundleOf(
-                                "package" to app.packageName
+                                "package" to packageName
                         ))
                         true
                     }
-                    pref.key = "pref_push_app_" + app.packageName
-                    pref to (database.getRegistrationsByApp(app.packageName))
+                    pref.key = "pref_push_app_" + packageName
+                    pref to (database.getRegistrationsByApp(packageName))
                 }.sortedBy {
                     it.first.title.toString().lowercase()
                 }.mapIndexed { idx, pair ->
@@ -133,4 +138,14 @@ class PushNotificationAllAppsFragment : PreferenceFragmentCompat() {
             }
         }
     }
+}
+
+/** Installed apps that request a C2DM/FCM receive permission (Google's or this microG build's). */
+internal fun pushCapablePackages(context: android.content.Context): List<String> {
+    val pm = context.packageManager
+    val permissions = setOf("com.google.android.c2dm.permission.RECEIVE", org.microg.gms.common.Constants.GMS_PACKAGE_NAME.removeSuffix(".gms") + ".c2dm.permission.RECEIVE")
+    @Suppress("DEPRECATION")
+    return runCatching { pm.getInstalledPackages(android.content.pm.PackageManager.GET_PERMISSIONS) }.getOrDefault(emptyList())
+        .filter { info -> info.packageName != context.packageName && info.requestedPermissions?.any { it in permissions } == true }
+        .map { it.packageName }
 }

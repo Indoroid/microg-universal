@@ -33,6 +33,9 @@ import android.util.Log;
 import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
+import java.util.List;
+
+import org.microg.gms.common.PackageSpoofUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,10 +76,9 @@ public class GServicesProvider extends ContentProvider {
             PackageManager packageManager = getContext().getPackageManager();
             // RE changes start
             if (new ExtendedPackageInfo(packageManager, packageName).isGooglePackage()) return true;
-            if (packageName.startsWith("app.morphe.") || packageName.startsWith("app.revanced.") || packageName.startsWith("app.rvx.")) {
-                return true;
-            }
-            return false;
+            // Patched (re-signed or cloned) Google apps declare their original identity.
+            String spoofed = PackageSpoofUtils.spoofPackageName(packageManager, packageName);
+            return spoofed != null && !spoofed.equals(packageName);
             // RE changes end
         } catch (Exception e) {
             return false;
@@ -115,7 +117,11 @@ public class GServicesProvider extends ContentProvider {
         if (packageName == null) return false;
         try {
             String[] requestedPermissions = getContext().getPackageManager().getPackageInfo(packageName, PackageManager.GET_PERMISSIONS).requestedPermissions;
-            return requestedPermissions != null && Arrays.asList(requestedPermissions).contains("com.google.android.providers.gsf.permission.READ_GSERVICES");
+            if (requestedPermissions == null) return false;
+            List<String> requested = Arrays.asList(requestedPermissions);
+            // Patched apps request the renamed permission.
+            return requested.contains("com.google.android.providers.gsf.permission.READ_GSERVICES") ||
+                    requested.contains(BuildConfig.BASE_PACKAGE_NAME + ".android.providers.gsf.permission.READ_GSERVICES");
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }

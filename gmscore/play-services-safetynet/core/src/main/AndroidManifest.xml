@@ -7,6 +7,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+        <service android:name="org.microg.gms.safetynet.SafeBrowsingApiService"
+                 android:exported="true">
+            <intent-filter>
+                <action android:name="${basePackageName}.android.gms.safebrowsing.SafeBrowsingService.START" />
+            </intent-filter>
+        </service>
         <service android:name="org.microg.gms.safetynet.SafetyNetClientService"
                  android:exported="true">
             <intent-filter>

@@ -136,7 +136,14 @@ public class ProviderInstallerImpl {
             String path = "lib/" + primaryCpuAbi + "/libconscrypt_gmscore_jni.so";
             File cacheFile = new File(context.createPackageContext(packageName, 0).getCacheDir().getAbsolutePath() + "/.gmscore/" + path);
             cacheFile.getParentFile().mkdirs();
-            File apkFile = new File(context.getPackageCodePath());
+            // A dynamite module context reports the host app's code path; the library lives in
+            // microG's APK, and is needed whenever the app's ABI differs from microG's primary one.
+            File apkFile;
+            try {
+                apkFile = new File(context.getPackageManager().getApplicationInfo(org.microg.gms.common.Constants.GMS_PACKAGE_NAME, 0).sourceDir);
+            } catch (Exception e) {
+                apkFile = new File(context.getPackageCodePath());
+            }
             if (!cacheFile.exists() || cacheFile.lastModified() < apkFile.lastModified()) {
                 cacheFile.delete();
                 ZipFile zipFile = new ZipFile(apkFile);

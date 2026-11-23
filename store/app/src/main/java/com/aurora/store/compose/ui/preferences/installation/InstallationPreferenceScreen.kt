@@ -37,6 +37,8 @@ import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.data.installer.AppInstaller
 import com.aurora.store.util.Preferences
 import com.aurora.store.util.Preferences.PREFERENCE_AUTO_DELETE
+import com.aurora.store.util.Preferences.PREFERENCE_MICROG_CLONE
+import com.aurora.store.util.Preferences.PREFERENCE_MICROG_PATCH
 import com.aurora.store.util.save
 
 @Composable
@@ -72,6 +74,12 @@ private fun ScreenContent(
     val context = LocalContext.current
     var autoDelete by remember {
         mutableStateOf(Preferences.getBoolean(context, PREFERENCE_AUTO_DELETE, true))
+    }
+    var microgPatch by remember {
+        mutableStateOf(Preferences.getBoolean(context, PREFERENCE_MICROG_PATCH, true))
+    }
+    var microgClone by remember {
+        mutableStateOf(Preferences.getBoolean(context, PREFERENCE_MICROG_CLONE, true))
     }
     var showClearOwnerDialog by remember { mutableStateOf(false) }
 
@@ -113,6 +121,44 @@ private fun ScreenContent(
                     modifier = Modifier.clickable { onNavigateTo(Destination.Installer) },
                     headlineContent = { Text(stringResource(R.string.pref_install_mode_title)) },
                     supportingContent = { Text(stringResource(installerTitle)) }
+                )
+            }
+            item { HorizontalDivider() }
+            item {
+                ListItem(headlineContent = { Text(stringResource(R.string.pref_microg_category)) })
+            }
+            item {
+                ListItem(
+                    modifier = Modifier.clickable {
+                        microgPatch = !microgPatch
+                        context.save(PREFERENCE_MICROG_PATCH, microgPatch)
+                    },
+                    headlineContent = { Text(stringResource(R.string.pref_microg_patch_title)) },
+                    supportingContent = { Text(stringResource(R.string.pref_microg_patch_summary)) },
+                    trailingContent = {
+                        Switch(checked = microgPatch, onCheckedChange = { checked ->
+                            microgPatch = checked
+                            context.save(PREFERENCE_MICROG_PATCH, checked)
+                        })
+                    }
+                )
+            }
+            item {
+                ListItem(
+                    modifier = Modifier.clickable(enabled = microgPatch) {
+                        microgClone = !microgClone
+                        context.save(PREFERENCE_MICROG_CLONE, microgClone)
+                    },
+                    headlineContent = { Text(stringResource(R.string.pref_microg_clone_title)) },
+                    supportingContent = {
+                        Text(stringResource(if (microgClone) R.string.pref_microg_clone_summary_on else R.string.pref_microg_clone_summary_off))
+                    },
+                    trailingContent = {
+                        Switch(checked = microgClone, enabled = microgPatch, onCheckedChange = { checked ->
+                            microgClone = checked
+                            context.save(PREFERENCE_MICROG_CLONE, checked)
+                        })
+                    }
                 )
             }
             item { HorizontalDivider() }

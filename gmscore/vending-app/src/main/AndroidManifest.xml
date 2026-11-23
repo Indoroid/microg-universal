@@ -203,6 +203,32 @@
         </service>
 
         <service
+            android:name="com.google.android.finsky.enterprisedevicereport.AppStatesService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.enterprise.feedback.action.APP_STATES"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.google.android.finsky.dataprojectionapiservice.DataProjectionApiService"
+            android:exported="true"
+            android:process=":background">
+            <intent-filter>
+                <action android:name="com.google.android.play.core.grouping.BIND_GROUPING_API_SERVICE"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.google.android.finsky.appcontentservice.engage.AppEngageService"
+            android:exported="true"
+            android:process=":background">
+            <intent-filter>
+                <action android:name="com.google.android.play.engage.BIND_APP_ENGAGE_SERVICE"/>
+            </intent-filter>
+        </service>
+
+        <service
             android:name="com.google.android.finsky.appcontentservice.engage.AppEngageServiceV2"
             android:exported="true"
             android:process=":background">

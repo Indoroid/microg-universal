@@ -136,3 +136,12 @@
 -dontwarn com.huawei.**
 -keep class com.hihonor.** { *; }
 -dontwarn com.hihonor.**
+
+# microg-universal: on-device Morphe patcher (reflection, service loading, ARSCLib/smali)
+-keep class app.morphe.** { *; }
+-keep class com.reandroid.** { *; }
+-keep class com.android.tools.smali.** { *; }
+-keep class com.android.apksig.** { *; }
+-keep class com.android.tools.build.apkzlib.** { *; }
+-keep class org.bouncycastle.** { *; }
+-dontwarn **

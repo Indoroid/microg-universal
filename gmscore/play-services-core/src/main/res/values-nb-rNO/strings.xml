@@ -50,17 +50,10 @@ Dette kan ta et par minutter."</string>
     <string name="auth_action_activity_header">Fullfør oppsettet av Google-kontoen din</string>
     <string name="auth_action_activity_explanation">Fullfør følgende trinn for å kunne bruke Google-kontoen din %s på denne enheten.</string>
     <string name="auth_action_step_enable_checkin">Aktiver enhetsregistrering</string>
-    <string name="auth_action_step_enable_checkin_description">"Enheten din må registrere seg hos Google minst én gang.
-
-Du kan deaktivere Google-enhetsregistrering etter at kontooppsettet er fullført."</string>
     <string name="auth_action_step_enable_gcm">Aktiver Cloud Messaging</string>
     <string name="auth_action_step_enable_gcm_description">Du kan deaktivere Cloud Messaging etter at kontooppsettet er fullført.</string>
     <string name="auth_action_step_allow_microg_gcm">Tillat Cloud Messaging for microG</string>
-    <string name="auth_action_step_allow_microg_gcm_description">I henhold til innstillingene dine trenger microG tillatelse fra deg før det kan registrere seg for Cloud Messaging.</string>
     <string name="auth_action_step_enable_lockscreen">Konfigurer sikker skjermlås</string>
-    <string name="auth_action_step_enable_lockscreen_description">"Google-kontoen din administreres av arbeidsplassen eller utdanningsinstitusjonen din. Administratoren din har bestemt at enheter trenger en sikker skjermlås før de kan få tilgang til kontodata.
-
-Vennligst sett opp et passord, en PIN-kode eller et mønsterlås."</string>
     <string name="auth_action_step_perform_content_description">Klikk for å utføre trinnet</string>
     <string name="auth_action_step_completed_content_description">Trinn fullført</string>
     <string name="auth_action_activity_finish">Fullfør</string>
@@ -69,7 +62,6 @@ Vennligst sett opp et passord, en PIN-kode eller et mønsterlås."</string>
     <string name="signin_picker_add_account_label">Legg til en annen konto</string>
     <string name="signin_confirm_title">Tillat å logge deg inn på <xliff:g example="F-Droid">%1$s</xliff:g></string>
     <string name="signin_confirm_button_text">Tillat og del</string>
-    <string name="signin_subtext_sharing">For å fortsette vil microG dele navn, e-postadresse og profilbilde fra Google-kontoen din med <xliff:g example="F-Droid">%1$s</xliff:g>.</string>
     <string name="perm_status_broadcast_label">lytt til interne status sendinger</string>
     <string name="perm_gsf_read_gservices_label">les Google-tjenestekonfigurasjon</string>
     <string name="perm_c2dm_receive_label">lytt til C2DM-meldinger</string>
@@ -84,18 +76,12 @@ Vennligst sett opp et passord, en PIN-kode eller et mønsterlås."</string>
     <string name="perm_car_info_description">"Få tilgang til bilens informasjon"</string>
     <string name="perm_car_fuel_label">Bilens drivstoffnivå</string>
     <string name="perm_car_fuel_description">"Få tilgang til informasjon om bilens drivstoffnivå"</string>
-    <string name="perm_car_mileage_label">Bilens kjørelengde</string>
-    <string name="perm_car_mileage_description">"Få tilgang til informasjon om bilens kjørelengde"</string>
-    <string name="perm_car_vendor_extension_label">Bilprodusentkanal</string>
-    <string name="perm_car_vendor_extension_description">"Få tilgang til bilens produsentkanal for å utveksle bilspesifikk informasjon"</string>
     <string name="service_name_checkin">Enhetsregistrering</string>
     <string name="service_name_mcs">Cloud Messaging</string>
     <string name="service_name_device_attestation">Enhetsattestasjon</string>
     <string name="service_name_vending">Play Store-tjenester</string>
     <string name="service_name_work_profile">Arbeidsprofil</string>
     <string name="games_title">Google Play Games</string>
-    <string name="games_info_title"><xliff:g example="F-Droid">%1$s</xliff:g> vil gjerne bruke Play Games</string>
-    <string name="games_info_content">For å bruke Play Games er det nødvendig å installere Google Play Games-appen. Applikasjonen kan fortsette uten Play Games, men det er mulig at den vil oppføre seg uventet.</string>
     <string name="pick_place_title">Velg et sted</string>
     <string name="place_picker_select_title">Velg denne plasseringen</string>
     <string name="place_picker_nearby_places">Steder i nærheten</string>
@@ -104,7 +90,6 @@ Vennligst sett opp et passord, en PIN-kode eller et mønsterlås."</string>
     <string name="network_type_roaming">Roaming</string>
     <string name="network_type_other">Andre nettverk</string>
     <!-- Self check -->
-    <string name="self_check_cat_fake_sig">Signature spoofing-støtte</string>
     <string name="self_check_cat_gms_packages">Installerte pakker</string>
     <string name="self_check_cat_system">System</string>
     <string name="self_check_name_system_spoofs">Systemet forfalsker signatur: </string>

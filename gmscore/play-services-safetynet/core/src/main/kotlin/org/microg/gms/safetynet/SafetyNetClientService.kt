@@ -15,11 +15,16 @@ import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.common.internal.GetServiceRequest
 import com.google.android.gms.common.internal.IGmsCallbacks
 import com.google.android.gms.safetynet.HarmfulAppsInfo
 import com.google.android.gms.safetynet.RecaptchaResultData
+import com.google.android.gms.safetynet.RemoveHarmfulAppData
 import com.google.android.gms.safetynet.SafeBrowsingData
 import com.google.android.gms.safetynet.SafetyNetStatusCodes
 import com.google.android.gms.safetynet.internal.ISafetyNetCallbacks
@@ -75,27 +80,103 @@ class SafetyNetClientServiceImpl(
     override fun getSharedUuid(callbacks: ISafetyNetCallbacks) {
         PackageUtils.checkPackageUid(context, packageName, getCallingUid())
         PackageUtils.assertGooglePackagePermission(context, GooglePackagePermission.SAFETYNET)
-
-        // TODO
-        Log.d(TAG, "dummy Method: getSharedUuid")
-        callbacks.onSharedUuid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        callbacks.onSharedUuid(if (SafetyNetAppAccess.mayUse(context, packageName)) VerifyApps.sharedUuid(context) else SHARED_UUID_UNSET)
     }
 
-    override fun lookupUri(callbacks: ISafetyNetCallbacks, apiKey: String, threatTypes: IntArray, i: Int, s2: String) {
-        Log.d(TAG, "unimplemented Method: lookupUri")
-        callbacks.onSafeBrowsingData(Status.SUCCESS, SafeBrowsingData())
+    override fun lookupUri(callbacks: ISafetyNetCallbacks, apiKey: String?, threatTypes: IntArray?, version: Int, uri: String?) {
+        if (apiKey.isNullOrEmpty()) return callbacks.onSafeBrowsingData(Status(SafetyNetStatusCodes.SAFE_BROWSING_MISSING_API_KEY), SafeBrowsingData())
+        val types = threatTypes?.toList().orEmpty()
+        if (types.isEmpty() || types.none { SafeBrowsing.isSupported(it) })
+            return callbacks.onSafeBrowsingData(Status(SafetyNetStatusCodes.SAFE_BROWSING_UNSUPPORTED_THREAT_TYPES), SafeBrowsingData())
+        if (!SafetyNetAppAccess.mayUse(context, packageName) || uri.isNullOrEmpty())
+            return callbacks.onSafeBrowsingData(Status.SUCCESS, SafeBrowsingData().apply { metadata = SafeBrowsing.matchesJson(emptyList()) })
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = runCatching { SafeBrowsing.lookup(apiKey, uri, types) }
+            runCatching {
+                result.onSuccess {
+                    callbacks.onSafeBrowsingData(Status.SUCCESS, SafeBrowsingData().apply { metadata = SafeBrowsing.matchesJson(it) })
+                }.onFailure {
+                    Log.w(TAG, "lookupUri failed", it)
+                    callbacks.onSafeBrowsingData(Status(CommonStatusCodes.NETWORK_ERROR, it.message), SafeBrowsingData())
+                }
+            }
+        }
     }
 
     override fun enableVerifyApps(callbacks: ISafetyNetCallbacks) {
-        Log.d(TAG, "dummy Method: enableVerifyApps")
-        callbacks.onVerifyAppsUserResult(Status.SUCCESS, true)
+        if (!SafetyNetAppAccess.mayUse(context, packageName)) return callbacks.onVerifyAppsUserResult(Status(SafetyNetStatusCodes.VERIFY_APPS_NOT_AVAILABLE), false)
+        // The user controls Play Protect in microG settings; an app may only read the decision.
+        val enabled = VerifyApps.isEnabled(context)
+        callbacks.onVerifyAppsUserResult(Status.SUCCESS, enabled)
+    }
+
+    override fun isVerifyAppsEnabled(callbacks: ISafetyNetCallbacks) {
+        val enabled = SafetyNetAppAccess.mayUse(context, packageName) && VerifyApps.isEnabled(context)
+        callbacks.onVerifyAppsUserResult(Status.SUCCESS, enabled)
     }
 
     override fun listHarmfulApps(callbacks: ISafetyNetCallbacks) {
-        Log.d(TAG, "dummy Method: listHarmfulApps")
-        callbacks.onHarmfulAppsInfo(Status.SUCCESS, HarmfulAppsInfo().apply {
-            lastScanTime = ((System.currentTimeMillis() - VERIFY_APPS_LAST_SCAN_DELAY) / VERIFY_APPS_LAST_SCAN_TIME_ROUNDING) * VERIFY_APPS_LAST_SCAN_TIME_ROUNDING + VERIFY_APPS_LAST_SCAN_OFFSET
-        })
+        if (!SafetyNetAppAccess.mayUse(context, packageName) || !VerifyApps.isEnabled(context))
+            return callbacks.onHarmfulAppsInfo(Status(SafetyNetStatusCodes.VERIFY_APPS_NOT_ENABLED), HarmfulAppsInfo())
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Rescan at most every 6 h, like a background Play Protect run.
+            val apps = if (System.currentTimeMillis() - VerifyApps.lastScanTime(context) > 6 * 3_600_000L)
+                VerifyApps.scan(context, DEFAULT_API_KEY) else VerifyApps.lastResult(context)
+            runCatching {
+                callbacks.onHarmfulAppsInfo(Status.SUCCESS, HarmfulAppsInfo().apply {
+                    lastScanTime = VerifyApps.lastScanTime(context)
+                    harmfulApps = apps.toTypedArray()
+                    hoursSinceLastScanWithHarmfulApp = VerifyApps.hoursSinceLastHarmful(context)
+                })
+            }
+        }
+    }
+
+    override fun lookupApkDigest(callbacks: ISafetyNetCallbacks?, apiKey: String?, mode: Int, digest: ByteArray?) {
+        if (callbacks == null) return
+        if (apiKey.isNullOrEmpty()) return callbacks.onSafeBrowsingData(Status(SafetyNetStatusCodes.SAFE_BROWSING_MISSING_API_KEY), SafeBrowsingData())
+        if (digest == null || !SafetyNetAppAccess.mayUse(context, packageName))
+            return callbacks.onSafeBrowsingData(Status.SUCCESS, SafeBrowsingData().apply { metadata = SafeBrowsing.matchesJson(emptyList()) })
+        lifecycleScope.launch(Dispatchers.IO) {
+            val hex = digest.joinToString("") { "%02x".format(it) }
+            val result = runCatching { SafeBrowsing.lookup(apiKey, "safe.safebrowsing.google.com/$hex/", listOf(4)) }
+            runCatching {
+                result.onSuccess { callbacks.onSafeBrowsingData(Status.SUCCESS, SafeBrowsingData().apply { metadata = SafeBrowsing.matchesJson(it) }) }
+                    .onFailure { callbacks.onSafeBrowsingData(Status(CommonStatusCodes.NETWORK_ERROR, it.message), SafeBrowsingData()) }
+            }
+        }
+    }
+
+    override fun reportHarmfulApp(event: Int, extras: Bundle?) {
+        Log.d(TAG, "Harmful app event $event from $packageName: ${extras?.getString("package_name")}")
+    }
+
+    override fun initSafeBrowsingForPackage(callbacks: ISafetyNetCallbacks?) {
+        callbacks?.onInitSafeBrowsingResult(if (SafetyNetAppAccess.mayUse(context, packageName)) Status.SUCCESS else Status(SafetyNetStatusCodes.SAFE_BROWSING_API_NOT_AVAILABLE))
+    }
+
+    override fun getSafeBrowsingDatabase(callbacks: ISafetyNetCallbacks?, version: Int, apiKey: String?) {
+        // Local Safe Browsing lists are not kept (lookups go to the prefix API).
+        callbacks?.onSafeBrowsingData(Status(SafetyNetStatusCodes.SAFE_BROWSING_API_NOT_AVAILABLE), SafeBrowsingData())
+    }
+
+    override fun getSafeBrowsingListState(callbacks: ISafetyNetCallbacks?, threatType: Int) {
+        callbacks?.onSafeBrowsingData(Status(SafetyNetStatusCodes.SAFE_BROWSING_API_NOT_AVAILABLE), SafeBrowsingData())
+    }
+
+    override fun removeHarmfulApp(callbacks: ISafetyNetCallbacks?, packageName: String?, digest: ByteArray?) {
+        if (callbacks == null || packageName == null) return
+        if (!VerifyApps.isHarmful(context, packageName, digest))
+            return callbacks.onRemoveHarmfulAppData(Status(SafetyNetStatusCodes.VERIFY_APPS_NOT_AVAILABLE), RemoveHarmfulAppData())
+        // Uninstalling needs the user's confirmation.
+        val intent = Intent(Intent.ACTION_DELETE, android.net.Uri.fromParts("package", packageName, null)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        runCatching { context.startActivity(intent) }
+        callbacks.onRemoveHarmfulAppData(Status.SUCCESS, RemoveHarmfulAppData().apply { field2 = 1; field3 = true })
+    }
+
+    override fun getTrustToken(callbacks: ISafetyNetCallbacks?, request: Bundle?) {
+        // Private State Tokens are issued by Google's anti-abuse backend to Play services only.
+        callbacks?.onTrustTokenResult(Status(CommonStatusCodes.API_NOT_CONNECTED), "", 0)
     }
 
     private fun InputStream.digest(algorithm: String): ByteArray {
@@ -119,7 +200,7 @@ class SafetyNetClientServiceImpl(
             return
         }
 
-        if (!SafetyNetPreferences.isEnabled(context)) {
+        if (!SafetyNetAppAccess.mayUse(context, packageName)) {
             Log.d(TAG, "ignoring SafetyNet request, SafetyNet is disabled")
             callbacks.onRecaptchaResult(Status(SafetyNetStatusCodes.ERROR, "Disabled"), null)
             return
@@ -128,7 +209,7 @@ class SafetyNetClientServiceImpl(
         val db = SafetyNetDatabase(context)
         val requestID = db.insertRecentRequestStart(
             SafetyNetRequestType.RECAPTCHA,
-            context.packageName,
+            packageName,
             null,
             System.currentTimeMillis()
         )
@@ -202,18 +283,11 @@ class SafetyNetClientServiceImpl(
     }
 
     override fun initSafeBrowsing(callbacks: ISafetyNetCallbacks) {
-        Log.d(TAG, "dummy: initSafeBrowsing")
-        callbacks.onInitSafeBrowsingResult(Status.SUCCESS)
+        callbacks.onInitSafeBrowsingResult(if (SafetyNetAppAccess.mayUse(context, packageName)) Status.SUCCESS else Status(SafetyNetStatusCodes.SAFE_BROWSING_API_NOT_AVAILABLE))
     }
 
-    override fun shutdownSafeBrowsing() {
-        Log.d(TAG, "dummy: shutdownSafeBrowsing")
-    }
+    override fun shutdownSafeBrowsing() {}
 
-    override fun isVerifyAppsEnabled(callbacks: ISafetyNetCallbacks) {
-        Log.d(TAG, "dummy: isVerifyAppsEnabled")
-        callbacks.onVerifyAppsUserResult(Status.SUCCESS, true)
-    }
 
     override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean = warnOnTransactionIssues(code, reply, flags, TAG) { super.onTransact(code, data, reply, flags) }
 

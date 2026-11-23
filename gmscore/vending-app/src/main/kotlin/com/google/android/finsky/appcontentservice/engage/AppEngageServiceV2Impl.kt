@@ -14,10 +14,14 @@ class AppEngageServiceV2Impl(override val lifecycle: Lifecycle) : IAppEngageServ
     private val TAG = "AppEngageServiceV2Impl"
     override fun publishClusters(bundle: Bundle?, callback: IAppEngageServicePublishClustersCallback?) {
         Log.d(TAG, "publishClusters: ")
+        // Engage content is not surfaced anywhere without Google's launcher; accept and drop it, but answer
+        // so the caller's Task completes.
+        runCatching { callback?.onResult(Bundle()) }
     }
 
     override fun deleteClusters(bundle: Bundle?, callback: IAppEngageServiceDeleteClustersCallback?) {
         Log.d(TAG, "deleteClusters: ")
+        runCatching { callback?.onResult(Bundle()) }
     }
 
     override fun isServiceAvailable(bundle: Bundle?, callback: IAppEngageServiceAvailableCallback?) {
@@ -29,5 +33,6 @@ class AppEngageServiceV2Impl(override val lifecycle: Lifecycle) : IAppEngageServ
 
     override fun updatePublishStatus(bundle: Bundle?, callback: IAppEngageServicePublishStatusCallback?) {
         Log.d(TAG, "updatePublishStatus: ")
+        runCatching { callback?.onResult(Bundle()) }
     }
 }
